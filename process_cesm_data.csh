@@ -53,14 +53,14 @@ while ( ${#argv} )
   shift
 end
 
-if ( $CASE != "20THC" && $CASE != "RCP85" && $CASE != "RCP60" && $CASE != "RCP45" ) then
+if ( $CASE != "SSP126" && $CASE != "SSP245" && $CASE != "SSP370" && $CASE != "SSP585" ) then
   echo "Must at least specify the the case to run and the year on the command line"
   echo "  Available command line options are:"
-  echo "  -c CASE (eg, -c 20THC). (Options are: 20THC, RCP85, RCP60, or RCP45)"
-  echo "  -y YYYY (eg, -y 1980)"
+  echo "  -c CASE (eg, -c SSP126). (Options are: SSP126, SSP245, SSP370, or SSP585)"
+  echo "  -y YYYY (eg, -y 2015)"
   echo "  -m XX  (number of years to process) "
   echo " "
-  echo "  eg:  ./process_cesm_data.csh  -c 20THC -y 1980 -m 4"
+  echo "  eg:  ./process_cesm_data.csh  -c SSP126 -y 2015 -m 1"
   echo " "
   exit
 endif
@@ -68,11 +68,11 @@ endif
 if ( $doYY == 0 ) then
   echo "Must at least specify the the case to run and the year on the command line"
   echo "  Available command line options are:"
-  echo "  -c CASE (eg, -c 20THC). (Options are: 20THC, RCP85, RCP60, or RCP45)"
-  echo "  -y YYYY (eg, -y 1980)"
+  echo "  -c CASE (eg, -c SSP126). (Options are: SSP126, SSP245, SSP370, or SSP585)"
+  echo "  -y YYYY (eg, -y 2015)"
   echo "  -m XX  (number of years to process) "
   echo " "
-  echo "  eg:  ./process_cesm_data.csh  -c 20THC -y 1980 -m 4"
+  echo "  eg:  ./process_cesm_data.csh  -c SSP126 -y 2015 -m 1"
   echo " "
   exit
 endif
@@ -84,7 +84,7 @@ else
 endif
 
 echo " "
-echo "   Processing CESM for $CASE for years $doYY to $endYY "
+echo "   Processing CESM2 for $CASE for years $doYY to $endYY "
 echo "   The output will have root names ${IM_root_name}_${CASE} and will be saved to the directory $outDIR"
 echo " "
 
@@ -97,14 +97,14 @@ while ( $doYY <= $endYY )
     set months = 3
 
     if ( $CASE == "20THC" ) then
-      if ( $yyyy > 2005 ) then
-        echo " For the 20THC the year must be less or equal to 2005"
+      if ( $yyyy > 2014 ) then
+        echo " For the 20THC the year must be less or equal to 2014"
         echo " "
         exit
       endif
     else
-      if ( $yyyy < 2006 ) then
-        echo " For the climate projections the year must be greater or equal to 2006"
+      if ( $yyyy < 2015 ) then
+        echo " For the climate projections the year must be greater or equal to 2015"
         echo " "
         exit
       endif
@@ -123,7 +123,7 @@ while ( $doYY <= $endYY )
     set ehh = 18
 
 
-    #get rid of old symlinks to CESM source files
+    #get rid of old symlinks to CESM2 source files
     rm atmos_*.nc
 
 
