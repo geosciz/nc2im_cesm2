@@ -13,12 +13,12 @@ if ( ${#argv} < 2 ) then
   echo "Must at least specify the the case to run and the year on the command line"
   echo "  Available command line options are:"
   echo "  -c CASE (eg, -c SSP126). (Options are: SSP126, SSP245, SSP370, or SSP585) - Required"
-  echo "  -y YYYY (eg, -y 1980) - Required"
+  echo "  -y YYYY (eg, -y 2015) - Required"
   echo "  -m XX  (number of years to process) - Optional"
   echo "  -f FILENAME (IM root name to use). The case used will be appending to the root name - Optional setting"
   echo "  -o DIRECTORY (output directory) - Optional"
   echo " "
-  echo "  eg:  ./process_cesm_data.csh  -c 20THC -y 1980 -m 4"
+  echo "  eg:  ./process_cesm_data.csh  -c SSP126 -y 2015 -m 1"
   echo " "
   exit
 endif
@@ -27,7 +27,7 @@ endif
 set CASE = "dummy"
 set doYY = 0
 set numYY = 0
-set IM_root_name = "CESM_CMIP5_MOAR"
+set IM_root_name = "CESM2_SCENARIOMIP_CMIP6"
 set outDIR = "OUTPUT"
 
 while ( ${#argv} )
