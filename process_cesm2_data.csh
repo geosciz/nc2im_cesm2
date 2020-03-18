@@ -8,7 +8,6 @@
 # The code runs in one year sections.
 # To ensure that the NCL code is not memory intensive, the NCL part will run in three month sections.
 
-
 if ( ${#argv} < 2 ) then
   echo "Must at least specify the the case to run and the year on the command line"
   echo "  Available command line options are:"
@@ -22,7 +21,6 @@ if ( ${#argv} < 2 ) then
   echo " "
   exit
 endif
-
 
 set CASE = "dummy"
 set doYY = 0
@@ -110,7 +108,6 @@ while ( $doYY <= $endYY )
       endif
     endif
 
-
     set eDDs = (31 28 31 30 31 30 31 31 30 31 30 31)
 
     set smm=`printf %02d $mm`
@@ -122,15 +119,12 @@ while ( $doYY <= $endYY )
     set edd = $eDDs[$test_mm]
     set ehh = 18
 
-
     #get rid of old symlinks to CESM2 source files
     rm atmos_*.nc
-
 
     #symlink to constants (surface geopotential and land mask) ; note that these a specific to these CMIP5 CCSM4 runs
     ln -s ../Invariant_Data/USGS-gtopo30_0.9x1.25_remap_c051027.nc atmos_zsfc.nc
     ln -s ../Invariant_Data/fracdata_0.9x1.25_gx1v6_c090317.nc atmos_lmask.nc
-
 
     # Top directory for all files
     set topDIR = "/home/zhangc/scenariomip_cmip6"
@@ -172,26 +166,24 @@ while ( $doYY <= $endYY )
       endif
     endif
 
-
     #symlink to monthly variables that we will need to make into 6-hourly because 6-hourly variables are not available.
     # Note: Don't worry too much about these -- they are mainly just used to initialize
     # The variables are skintemp (ts), soil moisture (mrlsl in kg m-2), soil temperature (tsl), and liquid snow water equivalent (snw kg m-2)
 
-     ln -s ${topDIR}/ts_*.nc    atmos_ts.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_ts.nc    atmos_ts_1.nc
+     ln -s ${topDIR}/ts_*.nc atmos_ts.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_ts.nc atmos_ts_1.nc
 
      ln -s ${topDIR}/snw_*.nc    atmos_snw.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_snw.nc    atmos_snw_1.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_snw.nc atmos_snw_1.nc
 
      ln -s ${topDIR}/mrso_*.nc    atmos_mrlsl.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_mrlsl.nc    atmos_mrlsl_1.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_mrlsl.nc atmos_mrlsl_1.nc
 
      ln -s ${topDIR}/tsl_*.nc    atmos_tsl.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_tsl.nc    atmos_tsl_1.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_tsl.nc atmos_tsl_1.nc
 
      ln -s ${topDIR}/tos_*.nc    atmos_tos.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_tos.nc    atmos_tos_1.nc
-
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_tos.nc atmos_tos_1.nc
 
     # Unfortunately this data is not available on the glade directory - get from HPSS - run get_seaice.csh to downlowd data first
     #ln -s ${topDIR_1}/${clim_case}/mon/seaIce/OImon/${member}/latest/sic/sic_OImon_CCSM4_${clim_case}_${member}_${date_start_end}.nc  atmos_sic.nc
@@ -208,19 +200,16 @@ while ( $doYY <= $endYY )
        @ test_month = $test_month - 1
      end
 
-
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/ta_*.nc    atmos_ta.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/hus_*.nc    atmos_hus.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/ua_*.nc    atmos_ua.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/va_*.nc    atmos_va.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/ps_*.nc    atmos_ps.nc
-
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/ta_*.nc atmos_ta.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/hus_*.nc atmos_hus.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/ua_*.nc atmos_ua.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/va_*.nc atmos_va.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/ps_*.nc atmos_ps.nc
 
     #;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     # Finally, run the ncl script to convert these netcdf data to intermediate format
     ncl convert_cesm_hybrid_nc_to_pressure_int.ncl  'CASE="'${CASE}'"' 'IM_root_name="'${IM_root_name}'"' 'outDIR="'${outDIR}'"'
-
 
   end
   @ doYY = $doYY + 1
