@@ -133,9 +133,8 @@ while ( $doYY <= $endYY )
 
 
     # Top directory for all files
-    set topDIR_1 = "/glade/p/vetssg/data/CMIP5/output1/NCAR/CCSM4"
-    set topDIR_2 = "/glade/p/rda/data/ds316.0"
-    set member   = "r6i1p1"
+    set topDIR = "/home/zhangc/scenariomip_cmip6"
+    set member   = "r2i1p1f1"
 
     if ( $CASE == "20THC" ) then
       set clim_case  = "historical"
@@ -178,20 +177,20 @@ while ( $doYY <= $endYY )
     # Note: Don't worry too much about these -- they are mainly just used to initialize
     # The variables are skintemp (ts), soil moisture (mrlsl in kg m-2), soil temperature (tsl), and liquid snow water equivalent (snw kg m-2)
 
-     ln -s ${topDIR_1}/${clim_case}/mon/atmos/Amon/${member}/latest/ts/ts_Amon_CCSM4_*.nc                                              atmos_ts.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_ts.nc                                                               atmos_ts_1.nc
+     ln -s ${topDIR}/ts_*.nc    atmos_ts.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_ts.nc    atmos_ts_1.nc
 
-     ln -s ${topDIR_1}/${clim_case}/mon/landIce/LImon/${member}/latest/snw/snw_LImon_CCSM4_*.nc                                        atmos_snw.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_snw.nc                                                              atmos_snw_1.nc
+     ln -s ${topDIR}/snw_*.nc    atmos_snw.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_snw.nc    atmos_snw_1.nc
 
-     ln -s ${topDIR_1}/${clim_case}/mon/land/Lmon/${member}/latest/mrlsl/mrlsl_Lmon_CCSM4_${clim_case}_${member}_${date_start_ld}*.nc  atmos_mrlsl.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_mrlsl.nc                                                            atmos_mrlsl_1.nc
+     ln -s ${topDIR}/mrso_*.nc    atmos_mrlsl.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_mrlsl.nc    atmos_mrlsl_1.nc
 
-     ln -s ${topDIR_1}/${clim_case}/mon/land/Lmon/${member}/latest/tsl/tsl_Lmon_CCSM4_${clim_case}_${member}_${date_start_ld}*.nc      atmos_tsl.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_tsl.nc                                                              atmos_tsl_1.nc
+     ln -s ${topDIR}/tsl_*.nc    atmos_tsl.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_tsl.nc    atmos_tsl_1.nc
 
-     ln -s ${topDIR_1}/${clim_case}/day/ocean/day/${member}/latest/tos/tos_day_CCSM4_${clim_case}_${member}_${date_start_oc}*.nc       atmos_tos.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_tos.nc                                                              atmos_tos_1.nc
+     ln -s ${topDIR}/tos_*.nc    atmos_tos.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_tos.nc    atmos_tos_1.nc
 
 
     # Unfortunately this data is not available on the glade directory - get from HPSS - run get_seaice.csh to downlowd data first
@@ -210,11 +209,11 @@ while ( $doYY <= $endYY )
      end
 
 
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR_2}/${CASE_glade}/ts/T/${yyyy}.${CASE_glade}.T.nc                 atmos_ta.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR_2}/${CASE_glade}/ts/Q/${yyyy}.${CASE_glade}.Q.nc                 atmos_hus.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR_2}/${CASE_glade}/ts/U/${yyyy}.${CASE_glade}.U.nc                 atmos_ua.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR_2}/${CASE_glade}/ts/V/${yyyy}.${CASE_glade}.V.nc                 atmos_va.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR_2}/${CASE_glade}/ts/PS/${yyyy}.${CASE_glade}.PS.nc               atmos_ps.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/ta_*.nc    atmos_ta.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/hus_*.nc    atmos_hus.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/ua_*.nc    atmos_ua.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/va_*.nc    atmos_va.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/ps_*.nc    atmos_ps.nc
 
 
     #;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
