@@ -123,8 +123,8 @@ while ( $doYY <= $endYY )
     rm atmos_*.nc
 
     #symlink to constants (surface geopotential and land mask) ; note that these a specific to these CMIP5 CCSM4 runs
-    ln -s ../Invariant_Data/USGS-gtopo30_0.9x1.25_remap_c051027.nc atmos_zsfc.nc
-    ln -s ../Invariant_Data/fracdata_0.9x1.25_gx1v6_c090317.nc atmos_lmask.nc
+    ln -s USGS-gtopo30_0.9x1.25_remap_c051027.nc atmos_zsfc.nc
+    ln -s fracdata_0.9x1.25_gx1v6_c090317.nc atmos_lmask.nc
 
     # Top directory for all files
     set topDIR = "/home/zhangc/scenariomip_cmip6"
