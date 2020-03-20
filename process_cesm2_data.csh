@@ -186,10 +186,10 @@ while ( $doYY <= $endYY )
      cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_tos.nc atmos_tos_1.nc
 
     # Unfortunately this data is not available on the glade directory - get from HPSS - run get_seaice.csh to downlowd data first
-    #ln -s ${topDIR_1}/${clim_case}/mon/seaIce/OImon/${member}/latest/sic/sic_OImon_CCSM4_${clim_case}_${member}_${date_start_end}.nc  atmos_sic.nc
-    #cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_sic.nc                                                              atmos_sic_1.nc
+     ln -s ${topDIR}/siconc_*.nc  atmos_sic.nc
+     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_sic.nc atmos_sic_1.nc
      set test_month = $months
-     cp ./SEAICE/${CASE_glade}_sic_pct_${yyyy}-${smm}.nc   atmos_sic_1.nc
+    # cp ./SEAICE/${CASE_glade}_sic_pct_${yyyy}-${smm}.nc   atmos_sic_1.nc
      set tmm = $mm
      while ( $test_month > 1 )
        @ tmm = $tmm + 1
