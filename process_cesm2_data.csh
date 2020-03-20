@@ -188,17 +188,17 @@ while ( $doYY <= $endYY )
     # Unfortunately this data is not available on the glade directory - get from HPSS - run get_seaice.csh to downlowd data first
      ln -s ${topDIR}/siconc_*.nc  atmos_sic.nc
      cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_sic.nc atmos_sic_1.nc
-     set test_month = $months
+    # set test_month = $months
     # cp ./SEAICE/${CASE_glade}_sic_pct_${yyyy}-${smm}.nc   atmos_sic_1.nc
-     set tmm = $mm
-     while ( $test_month > 1 )
-       @ tmm = $tmm + 1
-       set mmm=`printf %02d $tmm`
-       cdo mergetime atmos_sic_1.nc ./SEAICE/${CASE_glade}_sic_pct_${yyyy}-${mmm}.nc tmp_sic.nc
-       cp tmp_sic.nc atmos_sic_1.nc
-       rm tmp_sic.nc
-       @ test_month = $test_month - 1
-     end
+    # set tmm = $mm
+    # while ( $test_month > 1 )
+    #   @ tmm = $tmm + 1
+    #   set mmm=`printf %02d $tmm`
+    #   cdo mergetime atmos_sic_1.nc ./SEAICE/${CASE_glade}_sic_pct_${yyyy}-${mmm}.nc tmp_sic.nc
+    #   cp tmp_sic.nc atmos_sic_1.nc
+    #   rm tmp_sic.nc
+    #   @ test_month = $test_month - 1
+    # end
 
      cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/ta_*.nc atmos_ta.nc
      cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} ${topDIR}/hus_*.nc atmos_hus.nc
