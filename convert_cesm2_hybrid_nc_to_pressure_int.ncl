@@ -1,5 +1,5 @@
 ;******************************************************************************
-; NCL script to convert CESM1 (ds316.0) data to Intermediate file format
+; NCL script to convert CESM2 data to Intermediate file format
 ;
 ; This script does not look for specific dates in a file - simply convert
 ; all dates in the input file to IM format, so it is the users responsibility
@@ -21,17 +21,17 @@ begin
 ; else you could clobber exisiting files.
 ;******************************************************************************
 
-;CASE = "20THC"
-;CASE = "RCP85"
-;CASE = "RCP60"
-;CASE = "RCP45"
+;CASE = "SSP126"
+;CASE = "SSP245"
+;CASE = "SSP370"
+;CASE = "SSP585"
 if ( .not. isvar("CASE") ) then
   print("We need to know which case we are running")
   exit
 end if
   
 if ( .not. isvar("IM_root_name") ) then
-  IM_root_name = "CESM_CMIP5_MOAR_"+CASE
+  IM_root_name = "CESM2_SCENARIOMIP_CMIP6_"+CASE
 else
   IM_root_name = IM_root_name+"_"+CASE
 end if

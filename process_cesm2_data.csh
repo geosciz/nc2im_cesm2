@@ -209,7 +209,7 @@ while ( $doYY <= $endYY )
     #;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     # Finally, run the ncl script to convert these netcdf data to intermediate format
-    ncl convert_cesm_hybrid_nc_to_pressure_int.ncl  'CASE="'${CASE}'"' 'IM_root_name="'${IM_root_name}'"' 'outDIR="'${outDIR}'"'
+    ncl convert_cesm2_hybrid_nc_to_pressure_int.ncl  'CASE="'${CASE}'"' 'IM_root_name="'${IM_root_name}'"' 'outDIR="'${outDIR}'"'
 
   end
   @ doYY = $doYY + 1
