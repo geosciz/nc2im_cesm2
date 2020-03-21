@@ -25,6 +25,7 @@ begin
 ;CASE = "SSP245"
 ;CASE = "SSP370"
 ;CASE = "SSP585"
+
 if ( .not. isvar("CASE") ) then
   print("We need to know which case we are running")
   exit
@@ -35,7 +36,6 @@ if ( .not. isvar("IM_root_name") ) then
 else
   IM_root_name = IM_root_name+"_"+CASE
 end if
-
 
 if ( .not. isvar("outDIR") ) then
   outDIR = "OUTPUT"
