@@ -84,7 +84,7 @@ end if
   PHIS = in_zsfc->PHIS
   ZSFC = PHIS/9.81
   SST_DAY = in_tos->tos
-  ICE_DAY_POP = in_sic->siconc*0.01 ; convert from % to fraction
+  ICE_DAY = in_sic->siconc*0.01 ; convert from % to fraction
   PS  = in_ps->ps
   LAT = in_ta->lat
 
@@ -107,7 +107,6 @@ end if
   SST6(3::4,:,:) = SST_DAY
   SST6 = where(ismissing(SST6),-1.E30, SST6) ; set missing value to default for METGRID.TBL
 
-  ICE_DAY = PopLatLon(ICE_DAY_POP,"gx1v6","fv0.9x1.25","bilin","da","090309")
   ICE6 = new((/ntim,nlat,nlon/),float) ; create a 6 hourly variable and repeat 4x daily
   ICE6(::4,:,:) = ICE_DAY
   ICE6(1::4,:,:) = ICE_DAY
