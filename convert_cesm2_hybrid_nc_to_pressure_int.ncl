@@ -158,7 +158,7 @@ end if
   TSKIN6(120:239,:,:) = conform(PS(120:239,:,:),TSKIN(1,:,:),(/1,2/))
   TSKIN6(240::,:,:)   = conform(PS(240::,:,:),TSKIN(2,:,:),(/1,2/))
 
-  TAVGSFC6 = TSKIN6 ; This can be used for inland lakes
+  TAVGSFC6 = TSKIN6 ; this can be used for inland lakes
 
   SNOWW6(0:119,:,:)   = conform(PS(0:119,:,:),SNOWW(0,:,:),(/1,2/))
   SNOWW6(120:239,:,:) = conform(PS(120:239,:,:),SNOWW(1,:,:),(/1,2/))
@@ -197,7 +197,7 @@ end if
   MSOIL4_6(240::,:,:)   = conform(PS(240::,:,:),MSOIL(2,8,:,:),(/1,2/))
 
 
-; Set missing values to default for METGRID.TBL
+; set missing values to default for METGRID.TBL
 
   TSOIL1_6 = where(ismissing(TSOIL1_6),-1.E30,TSOIL1_6)
   TSOIL2_6 = where(ismissing(TSOIL2_6),-1.E30,TSOIL2_6)
@@ -210,36 +210,46 @@ end if
   MSOIL4_6 = where(ismissing(MSOIL4_6),-1.E30,MSOIL4_6)
 
 
-; Get bottom level temperature for vertical extrapolation
+; get bottom level temperature for vertical extrapolation
+
   TBOT = T(:,0,:,:)
 
-; Calculate geopotential height
+; calculate geopotential height
+
   print ("calculate Z")
+
   TV = T
   TV = T*(1.+0.61*Q)
+  P = T->lev
   Z = T
-  ;Z = cz2ccm(PS,PHIS,TV(:,::-1,:,:),P0*100.,hyam,hybm,hyai,hybi)
-  Z = PS
-  Z = Z(:,::-1,:,:) ;reorder vertical so consistent with T,U,V, and Q (bottom up)
+  Z = hydro(P,TV(:,::-1,:,:),ZSFC)
+  Z = Z(:,::-1,:,:) ; reorder vertical so consistent with T,U,V, and Q (bottom up)
 
-; Calculate the pressures on each hybrid level (bottom up)
+
+; calculate the pressures on each hybrid level (bottom up)
+
   print ("calculate P")
+  P = T
   P = T->lev
 
-; Uses stock RH function in ncl
+; uses stock RH function in NCL
+
   print("calculate RH")
   R = T
   R = relhum(T,Q,P)
   R = where(R.gt.100.0, 100.0, R)
 
-; Calculate near surface variables (do this instead of take from files do to greater availability of 3d)
+
+; calculate near surface variables (do this instead of take from files do to greater availability of 3d)
 ; linearly extrapolate T2 in log(P) from 2 lowest hybrid levels)
 ; Assume RH at 2 m (R2) is same as RH at lowest hybrid level
 ; calculate Q2 from R2 and T2
 ; assume U10 and V10 follow a power law for a neutrally stable atmosphere and
 ; extrapolate them from the lowest hybrid level. Alpha = 0.143
 ; Hsu, S.A., et al, 1994,J. Appl. Meteor., Vol. 33, pp. 757-765
+
   print("calculate near surface variables")
+
   T2 = PS
   T2 = T(:,1,:,:)-(T(:,1,:,:)-T(:,0,:,:))*((log(PS)-log(P(:,1,:,:)))/(log(P(:,0,:,:))-log(P(:,1,:,:))))
   R2 = R(:,0,:,:)
@@ -250,13 +260,19 @@ end if
 ;************************************************
 ; define other arguments required by vinth2p
 ;************************************************
+
 ; type of interpolation: 1 = linear, 2 = log, 3 = loglog
+
   interp = 2
 
+
 ; is extrapolation desired if data is outside the range of PS
+
   extrap = True
 
+
 ; create an array of desired pressure levels:
+
   pnew = (/ 1000.0, 975.0, 950.0, 925.0, 900.0, 850.0, 800.0, 750.0, 700.0, 650.0, 600.0, 550.0, 500.0, \
              450.0, 400.0, 350.0, 300.0, 250.0, 200.0, 150.0, 100.0, 70.0, 50.0, 30.0, 20.0, 10.0 /)
 
@@ -264,10 +280,12 @@ end if
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; WRITE OUT DATA TO WRF INTERMEDIATE FORMAT (CALL FORTRAN SUBROUTINE VIA WRAPIT)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
   print("write out data to WRF intermediate files")
 
-; Set the IM header information
-; These are all passed to the write script as resources
+
+; set the IM header information
+; these are all passed to the write script as resources
 
   opt = True
   opt@map_source             = "CESM 0.9 x 1.25"
@@ -280,14 +298,14 @@ end if
   opt@is_wind_earth_relative = False
 
 
-; Set the format to use for the date
+; set the format to use for the date
 
   date_format  = "%Y-%N-%D_%H:00:0000000" ; 24 chars exact for binary file
   date_format2 = "%Y-%N-%D_%H"            ; for filename
   yyyy_format  = "%Y" 					  ; for output directory
 
 
-; Set up field specific header information
+; set up field specific header information
 
   FIELD_T = "TT"
   UNITS_T = "K"
@@ -403,89 +421,76 @@ end if
   DESC_ZSFC  = "Terrain Elevation"
 
 
-; Loop through each time period - do final calculations and write data to the IM format
+; loop through each time period - do final calculations and write data to the IM format
+
   do TIM = 0,ntim-1
 
-    HDATE = cd_string(time(TIM), date_format)                          ; set dates
-    OFILE = IM_root_name+":" + cd_string(time(TIM), date_format2)      ; figure the output file name so that we can clobber it
-    yyyy  = cd_string(time(TIM), yyyy_format)                          ; figure out the year so that we can make directories
-    print("HDATE= " + HDATE)
-    system ("mkdir -p " + outDIR + "/" + yyyy)	               	       ; make the output directories
-    system ("rm " + OFILE)                                             ; delete the file, so that we don't append to an existing file
-    system ("rm " + outDIR + "/" +yyyy+ "/" + OFILE)                   ; delete the file, so that we don't append to an existing file
-
-
-    ; calculate 3-d variables on pressure levels (need to do this here because ncl doesn't like multiple times)
-    print("extrapolate variables to pressure levels")
-    varflg = 1
-    TonP = vinth2p_ecmwf(T(TIM,::-1,:,:),hyam(::-1),hybm(::-1),pnew,PS(TIM,:,:),interp,P0,1,extrap,varflg,TBOT(TIM,:,:),PHIS)
-    varflg = -1
-    ZonP = vinth2p_ecmwf(Z(TIM,::-1,:,:),hyam(::-1),hybm(::-1),pnew,PS(TIM,:,:),interp,P0,1,extrap,varflg,TBOT(TIM,:,:),PHIS)
-    varflg = 0
-    UonP = vinth2p_ecmwf(U(TIM,::-1,:,:),hyam(::-1),hybm(::-1),pnew,PS(TIM,:,:),interp,P0,1,extrap,varflg,TBOT(TIM,:,:),PHIS)
-    VonP = vinth2p_ecmwf(V(TIM,::-1,:,:),hyam(::-1),hybm(::-1),pnew,PS(TIM,:,:),interp,P0,1,extrap,varflg,TBOT(TIM,:,:),PHIS)
-    RonP = vinth2p_ecmwf(R(TIM,::-1,:,:),hyam(::-1),hybm(::-1),pnew,PS(TIM,:,:),interp,P0,1,extrap,varflg,TBOT(TIM,:,:),PHIS)
-    RonP = where(RonP.gt.100.0, 100.0, RonP)
-    RonP = where(RonP.lt.0.0, 0.0, RonP)
+    HDATE = cd_string(time(TIM),date_format) ; set dates
+    OFILE = IM_root_name+":"+cd_string(time(TIM),date_format2) ; figure the output file name so that we can clobber it
+    yyyy  = cd_string(time(TIM),yyyy_format) ; figure out the year so that we can make directories
+    print("HDATE= "+HDATE)
+    system("mkdir -p "+outDIR+"/"+yyyy)	; make the output directories
+    system("rm " + OFILE) ; delete the file, so that we don't append to an existing file
+    system("rm "+outDIR+"/"+yyyy+"/"+OFILE) ; delete the file, so that we don't append to an existing file
 
 
     ; calcualte slp using ecmwf formulation (no 6-hourly or 3-hourly slp output is otherwise available)
+
     SLP = doubletofloat(pslec(TBOT(TIM,:,:),PHIS,PS(TIM,:,:),P(TIM,0,:,:)))
 
 
     opt@date = HDATE
-
     ; write any non-level variables (including treament of soil temp/moisture profiles as single levels each)
-    ; Due to the fact that other programs will read these files, and there we assume the fields to in a in given order,
+    ; due to the fact that other programs will read these files, and there we assume the fields to in a in given order,
     ; these order of the writes below are import for this application
-
     opt@level = 200100.
     wrf_wps_write_int(IM_root_name,FIELD_LMASK,UNITS_LMASK,DESC_LMASK, LMASK(:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_ZSFC,UNITS_ZSFC,DESC_ZSFC, doubletofloat(ZSFC(:,:)),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_TSKIN6,UNITS_TSKIN6,DESC_TSKIN6, TSKIN6(TIM,:,:),opt)
+    wrf_wps_write_int(IM_root_name,FIELD_ZSFC,UNITS_ZSFC,DESC_ZSFC,doubletofloat(ZSFC(:,:)),opt)
+    wrf_wps_write_int(IM_root_name,FIELD_TSKIN6,UNITS_TSKIN6,DESC_TSKIN6,TSKIN6(TIM,:,:),opt)
     wrf_wps_write_int(IM_root_name,FIELD_TAVGSFC6,UNITS_TAVGSFC6,DESC_TAVGSFC6, TAVGSFC6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_SST6,UNITS_SST6,DESC_SST6, SST6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_ICE6,UNITS_ICE6,DESC_ICE6, ICE6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_SNOWW6,UNITS_SNOWW6,DESC_SNOWW6, SNOWW6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_TSOIL1_6,UNITS_TSOIL1_6,DESC_TSOIL1_6, TSOIL1_6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_TSOIL2_6,UNITS_TSOIL2_6,DESC_TSOIL2_6, TSOIL2_6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_TSOIL3_6,UNITS_TSOIL3_6,DESC_TSOIL3_6, TSOIL3_6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_TSOIL4_6,UNITS_TSOIL4_6,DESC_TSOIL4_6, TSOIL4_6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_MSOIL1_6,UNITS_MSOIL1_6,DESC_MSOIL1_6, MSOIL1_6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_MSOIL2_6,UNITS_MSOIL2_6,DESC_MSOIL2_6, MSOIL2_6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_MSOIL3_6,UNITS_MSOIL3_6,DESC_MSOIL3_6, MSOIL3_6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_MSOIL4_6,UNITS_MSOIL4_6,DESC_MSOIL4_6, MSOIL4_6(TIM,:,:),opt)
+    wrf_wps_write_int(IM_root_name,FIELD_SST6,UNITS_SST6,DESC_SST6,SST6(TIM,:,:),opt)
+    wrf_wps_write_int(IM_root_name,FIELD_ICE6,UNITS_ICE6,DESC_ICE6,ICE6(TIM,:,:),opt)
+    wrf_wps_write_int(IM_root_name,FIELD_SNOWW6,UNITS_SNOWW6,DESC_SNOWW6,SNOWW6(TIM,:,:),opt)
+    wrf_wps_write_int(IM_root_name,FIELD_TSOIL1_6,UNITS_TSOIL1_6,DESC_TSOIL1_6,TSOIL1_6(TIM,:,:),opt)
+    wrf_wps_write_int(IM_root_name,FIELD_TSOIL2_6,UNITS_TSOIL2_6,DESC_TSOIL2_6,TSOIL2_6(TIM,:,:),opt)
+    wrf_wps_write_int(IM_root_name,FIELD_TSOIL3_6,UNITS_TSOIL3_6,DESC_TSOIL3_6,TSOIL3_6(TIM,:,:),opt)
+    wrf_wps_write_int(IM_root_name,FIELD_TSOIL4_6,UNITS_TSOIL4_6,DESC_TSOIL4_6,TSOIL4_6(TIM,:,:),opt)
+    wrf_wps_write_int(IM_root_name,FIELD_MSOIL1_6,UNITS_MSOIL1_6,DESC_MSOIL1_6,MSOIL1_6(TIM,:,:),opt)
+    wrf_wps_write_int(IM_root_name,FIELD_MSOIL2_6,UNITS_MSOIL2_6,DESC_MSOIL2_6,MSOIL2_6(TIM,:,:),opt)
+    wrf_wps_write_int(IM_root_name,FIELD_MSOIL3_6,UNITS_MSOIL3_6,DESC_MSOIL3_6,MSOIL3_6(TIM,:,:),opt)
+    wrf_wps_write_int(IM_root_name,FIELD_MSOIL4_6,UNITS_MSOIL4_6,DESC_MSOIL4_6,MSOIL4_6(TIM,:,:),opt)
 
-    opt@level = XLVL_SLP	; Need a different level for SLP
+    opt@level = XLVL_SLP ; need a different level for SLP
     wrf_wps_write_int(IM_root_name,FIELD_SLP,UNITS_SLP,DESC_SLP, SLP(:,:),opt)
 
-    opt@level = 200100.		; Reset level back to regular surface value
+    opt@level = 200100. ; reset level back to regular surface value
     wrf_wps_write_int(IM_root_name,FIELD_PS,UNITS_PS,DESC_PS, PS(TIM,:,:),opt)
     wrf_wps_write_int(IM_root_name,FIELD_U10,UNITS_U10,DESC_U10, U10(TIM,:,:),opt)
     wrf_wps_write_int(IM_root_name,FIELD_V10,UNITS_V10,DESC_V10, V10(TIM,:,:),opt)
     wrf_wps_write_int(IM_root_name,FIELD_T2,UNITS_T2,DESC_T2, T2(TIM,:,:),opt)
     wrf_wps_write_int(IM_root_name,FIELD_R2,UNITS_R2,DESC_R2, R2(TIM,:,:),opt)
 
+    ; write each level of the 3D fields out separately
 
-    ; Write each level of the 3D fields out separately
     do LEV=0,dimsizes(pnew)-1
-
       opt@level = pnew(LEV)*100.
-      wrf_wps_write_int(IM_root_name,FIELD_U,UNITS_U,DESC_U, UonP(LEV,:,:),opt)
-      wrf_wps_write_int(IM_root_name,FIELD_V,UNITS_V,DESC_V, VonP(LEV,:,:),opt)
-      wrf_wps_write_int(IM_root_name,FIELD_T,UNITS_T,DESC_T, TonP(LEV,:,:),opt)
-      wrf_wps_write_int(IM_root_name,FIELD_R,UNITS_R,DESC_R, RonP(LEV,:,:),opt)
-      wrf_wps_write_int(IM_root_name,FIELD_Z,UNITS_Z,DESC_Z, ZonP(LEV,:,:),opt)
-
+      wrf_wps_write_int(IM_root_name,FIELD_U,UNITS_U,DESC_U,U(LEV,:,:),opt)
+      wrf_wps_write_int(IM_root_name,FIELD_V,UNITS_V,DESC_V,V(LEV,:,:),opt)
+      wrf_wps_write_int(IM_root_name,FIELD_T,UNITS_T,DESC_T,T(LEV,:,:),opt)
+      wrf_wps_write_int(IM_root_name,FIELD_R,UNITS_R,DESC_R,R(LEV,:,:),opt)
+      wrf_wps_write_int(IM_root_name,FIELD_Z,UNITS_Z,DESC_Z,Z(LEV,:,:),opt)
     end do
 
+
     ; move the file to the outDIR directory
+
       print ("mv " + OFILE + "   " + outDIR + "/" +yyyy+ "/.")
       system ("mv " + OFILE + "   " + outDIR + "/" +yyyy+ "/.")
       print("  ")
 
      delete(HDATE)
      delete(OFILE)
+
   end do
 
 end
