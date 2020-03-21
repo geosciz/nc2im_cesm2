@@ -1,7 +1,7 @@
 ;******************************************************************************
 ; NCL script to convert CESM2 data to Intermediate file format
 ;
-; This script does not look for specific dates in a file - simply convert
+; this script does not look for specific dates in a file - simply convert
 ; all dates in the input file to IM format, so it is the users responsibility
 ; to ensure the input data is consistent
 ;******************************************************************************
@@ -16,7 +16,7 @@ begin
 
 
 ;******************************************************************************
-; Which CASE are we doing.
+; which CASE are we doing.
 ; CASE is only used for naming conventions, but make sure this is correct,
 ; else you could clobber exisiting files.
 ;******************************************************************************
@@ -43,14 +43,16 @@ end if
 
 
 ;******************************************************************************
-; Don't change anything below this line
+; don't change anything below this line
 ;******************************************************************************
 
 
 ;************************************************
 ; file handling
 ;************************************************
+
   print("opening files")
+
   in_ta    = addfile("atmos_ta.nc","r")      ; 6-hourly 3-d T
   in_ua    = addfile("atmos_ua.nc","r")      ; 6-hourly 3-d U
   in_va    = addfile("atmos_va.nc","r")      ; 6-hourly 3-d V
@@ -69,48 +71,57 @@ end if
 ;************************************************
 ; read needed variables from file
 ;************************************************
+
   print("read variables in")
 
-  time   = in_ta->time
-  P0 = 1000.       ; value of P0 is 1000.(units=hPa); it is used in both Pa and hPa units below depending on function
-  lon = in_ta->lon
-  lat = in_ta->lat
+  time = in_ta->time
+  P0   = 1000. ; value of P0 is 1000. (units=hPa); it is used in both Pa and hPa units below depending on function
+  lon  = in_ta->lon
+  lat  = in_ta->lat
 
   T = in_ta->ta(:,::-1,:,:)
   U = in_ua->ua(:,::-1,:,:)
   V = in_va->va(:,::-1,:,:)
   Q = in_hus->hus(:,::-1,:,:)
-  LMASK= in_lmask->LANDMASK*1.0
-  PHIS = in_zsfc->PHIS
-  ZSFC = PHIS/9.81
-  SST_DAY_POP   = in_tos->tos
-  ICE_DAY_POP   = in_sic->siconc*0.01 ; convert from % to fraction
-  PS   = in_ps->ps
-  LAT  = in_ta->lat
+
+  LMASK = in_lmask->LANDMASK*1.0
+  PHIS  = in_zsfc->PHIS
+  ZSFC  = PHIS/9.81
+
+  SST_DAY_POP = in_tos->tos
+  ICE_DAY_POP = in_sic->siconc*0.01 ; convert from % to fraction
+
+  PS  = in_ps->ps
+  LAT = in_ta->lat
+
 
 ; get dimensions from dummy variable
+
   dsizes_x = dimsizes(T)
   ntim     = dsizes_x(0)
   nlev     = dsizes_x(1)
   nlat     = dsizes_x(2)
   nlon     = dsizes_x(3)
 
-; Interpolate SST and SEA ICE fields to CESM Atmospheric domain from POP Ocean domain
+
+; interpolate SST and SEA ICE fields to CESM Atmospheric domain from POP Ocean domain
+
   SST_DAY = PopLatLon(SST_DAY_POP,"gx1v6","fv0.9x1.25","bilin","da","090309")
   SST6 = new((/ntim,nlat,nlon/),float) ; create a 6 hourly variable and repeat 4x daily
-  SST6(::4,:,:)=SST_DAY
-  SST6(1::4,:,:)=SST_DAY
-  SST6(2::4,:,:)=SST_DAY
-  SST6(3::4,:,:)=SST_DAY
-  SST6 = where (ismissing(SST6), -1.E30, SST6) ; set missing value to default for METGRID.TBL
+  SST6(::4,:,:) = SST_DAY
+  SST6(1::4,:,:) = SST_DAY
+  SST6(2::4,:,:) = SST_DAY
+  SST6(3::4,:,:) = SST_DAY
+  SST6 = where(ismissing(SST6), -1.E30, SST6) ; set missing value to default for METGRID.TBL
 
   ICE_DAY = PopLatLon(ICE_DAY_POP,"gx1v6","fv0.9x1.25","bilin","da","090309")
   ICE6 = new((/ntim,nlat,nlon/),float) ; create a 6 hourly variable and repeat 4x daily
-  ICE6(::4,:,:)=ICE_DAY
-  ICE6(1::4,:,:)=ICE_DAY
-  ICE6(2::4,:,:)=ICE_DAY
-  ICE6(3::4,:,:)=ICE_DAY
-  ICE6 = where (ismissing(ICE6), -1.E30, ICE6) ; set missing value to default for METGRID.TBL
+  ICE6(::4,:,:) = ICE_DAY
+  ICE6(1::4,:,:) = ICE_DAY
+  ICE6(2::4,:,:) = ICE_DAY
+  ICE6(3::4,:,:) = ICE_DAY
+  ICE6 = where(ismissing(ICE6), -1.E30, ICE6) ; set missing value to default for METGRID.TBL
+
 
 ; read in monthly variables and make into 6-hourly
   print("working on monthly variables")
