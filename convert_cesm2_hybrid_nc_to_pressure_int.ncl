@@ -52,7 +52,6 @@ end if
 ;************************************************
 
   print("opening files")
-
   in_ta    = addfile("atmos_ta.nc","r")      ; 6-hourly 3-d T
   in_ua    = addfile("atmos_ua.nc","r")      ; 6-hourly 3-d U
   in_va    = addfile("atmos_va.nc","r")      ; 6-hourly 3-d V
@@ -73,7 +72,6 @@ end if
 ;************************************************
 
   print("read variables in")
-
   time = in_ta->time
   P0 = 1000. ; value of P0 is 1000. (units=hPa); it is used in both Pa and hPa units below depending on function
   lon = in_ta->lon
@@ -85,7 +83,7 @@ end if
   LMASK = in_lmask->LANDMASK*1.0
   PHIS = in_zsfc->PHIS
   ZSFC = PHIS/9.81
-  SST_DAY_POP = in_tos->tos
+  SST_DAY = in_tos->tos
   ICE_DAY_POP = in_sic->siconc*0.01 ; convert from % to fraction
   PS  = in_ps->ps
   LAT = in_ta->lat
@@ -102,13 +100,12 @@ end if
 
 ; interpolate SST and SEA ICE fields to CESM Atmospheric domain from POP Ocean domain
 
-  SST_DAY = PopLatLon(SST_DAY_POP,"gx1v6","fv0.9x1.25","bilin","da","090309")
   SST6 = new((/ntim,nlat,nlon/),float) ; create a 6 hourly variable and repeat 4x daily
   SST6(::4,:,:) = SST_DAY
   SST6(1::4,:,:) = SST_DAY
   SST6(2::4,:,:) = SST_DAY
   SST6(3::4,:,:) = SST_DAY
-  SST6 = where(ismissing(SST6), -1.E30, SST6) ; set missing value to default for METGRID.TBL
+  SST6 = where(ismissing(SST6),-1.E30, SST6) ; set missing value to default for METGRID.TBL
 
   ICE_DAY = PopLatLon(ICE_DAY_POP,"gx1v6","fv0.9x1.25","bilin","da","090309")
   ICE6 = new((/ntim,nlat,nlon/),float) ; create a 6 hourly variable and repeat 4x daily
@@ -116,7 +113,7 @@ end if
   ICE6(1::4,:,:) = ICE_DAY
   ICE6(2::4,:,:) = ICE_DAY
   ICE6(3::4,:,:) = ICE_DAY
-  ICE6 = where(ismissing(ICE6), -1.E30, ICE6) ; set missing value to default for METGRID.TBL
+  ICE6 = where(ismissing(ICE6),-1.E30,ICE6) ; set missing value to default for METGRID.TBL
 
 
 ; read in monthly variables and make into 6-hourly
@@ -229,12 +226,14 @@ end if
 ; calculate the pressures on each hybrid level (bottom up)
 
   print ("calculate P")
+
   P = T
   P = T->lev
 
 ; uses stock RH function in NCL
 
   print("calculate RH")
+
   R = T
   R = relhum(T,Q,P)
   R = where(R.gt.100.0, 100.0, R)
@@ -469,6 +468,7 @@ end if
     wrf_wps_write_int(IM_root_name,FIELD_V10,UNITS_V10,DESC_V10, V10(TIM,:,:),opt)
     wrf_wps_write_int(IM_root_name,FIELD_T2,UNITS_T2,DESC_T2, T2(TIM,:,:),opt)
     wrf_wps_write_int(IM_root_name,FIELD_R2,UNITS_R2,DESC_R2, R2(TIM,:,:),opt)
+
 
     ; write each level of the 3D fields out separately
 

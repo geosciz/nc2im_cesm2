@@ -173,20 +173,20 @@ while ( $doYY <= $endYY )
      ln -s ${topDIR}/ts_*.nc atmos_ts.nc
      cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_ts.nc atmos_ts_1.nc
 
-     ln -s ${topDIR}/snw_*.nc    atmos_snw.nc
+     ln -s ${topDIR}/snw_*.nc atmos_snw.nc
      cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_snw.nc atmos_snw_1.nc
 
-     ln -s ${topDIR}/mrso_*.nc    atmos_mrlsl.nc
+     ln -s ${topDIR}/mrso_*.nc atmos_mrlsl.nc
      cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_mrlsl.nc atmos_mrlsl_1.nc
 
-     ln -s ${topDIR}/tsl_*.nc    atmos_tsl.nc
+     ln -s ${topDIR}/tsl_*.nc atmos_tsl.nc
      cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_tsl.nc atmos_tsl_1.nc
 
-     ln -s ${topDIR}/tos_*.nc    atmos_tos.nc
+     ln -s ${topDIR}/tos_*.nc atmos_tos.nc
      cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_tos.nc atmos_tos_1.nc
 
     # Unfortunately this data is not available on the glade directory - get from HPSS - run get_seaice.csh to downlowd data first
-     ln -s ${topDIR}/siconc_*.nc  atmos_sic.nc
+     ln -s ${topDIR}/siconca_*.nc atmos_sic.nc
      cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_sic.nc atmos_sic_1.nc
     # set test_month = $months
     # cp ./SEAICE/${CASE_glade}_sic_pct_${yyyy}-${smm}.nc   atmos_sic_1.nc
@@ -209,7 +209,7 @@ while ( $doYY <= $endYY )
     #;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     # Finally, run the ncl script to convert these netcdf data to intermediate format
-    # ncl convert_cesm2_hybrid_nc_to_pressure_int.ncl  'CASE="'${CASE}'"' 'IM_root_name="'${IM_root_name}'"' 'outDIR="'${outDIR}'"'
+     ncl convert_cesm2_hybrid_nc_to_pressure_int.ncl  'CASE="'${CASE}'"' 'IM_root_name="'${IM_root_name}'"' 'outDIR="'${outDIR}'"'
 
   end
   @ doYY = $doYY + 1
