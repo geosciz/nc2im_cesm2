@@ -75,22 +75,18 @@ end if
   print("read variables in")
 
   time = in_ta->time
-  P0   = 1000. ; value of P0 is 1000. (units=hPa); it is used in both Pa and hPa units below depending on function
-  lon  = in_ta->lon
-  lat  = in_ta->lat
-
+  P0 = 1000. ; value of P0 is 1000. (units=hPa); it is used in both Pa and hPa units below depending on function
+  lon = in_ta->lon
+  lat = in_ta->lat
   T = in_ta->ta(:,::-1,:,:)
   U = in_ua->ua(:,::-1,:,:)
   V = in_va->va(:,::-1,:,:)
   Q = in_hus->hus(:,::-1,:,:)
-
   LMASK = in_lmask->LANDMASK*1.0
-  PHIS  = in_zsfc->PHIS
-  ZSFC  = PHIS/9.81
-
+  PHIS = in_zsfc->PHIS
+  ZSFC = PHIS/9.81
   SST_DAY_POP = in_tos->tos
   ICE_DAY_POP = in_sic->siconc*0.01 ; convert from % to fraction
-
   PS  = in_ps->ps
   LAT = in_ta->lat
 
