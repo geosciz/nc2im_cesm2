@@ -120,15 +120,20 @@ end if
 
 
 ; read in monthly variables and make into 6-hourly
+
   print("working on monthly variables")
+
   TSKIN = in_ts->ts
   SNOWW = in_snw->snw
   TSOIL = in_tsl->tsl
-  MSOIL = in_mrlsl->mrso
-  ;SOILD = in_mrlsl->depth
+  MSOIL = in_mrlsl->mrlsl
+  SOILD = in_mrlsl->depth
 
-;convert MSOIL from kg m-2 to fraction
-  ;MSOIL = doubletofloat(MSOIL/(1000.*conform(MSOIL,SOILD,1)))
+
+; convert MSOIL from kg m-2 to fraction
+
+  MSOIL = doubletofloat(MSOIL/(1000.*conform(MSOIL,SOILD,1)))
+
 
 ; now make into 6 hourly variables that change every ~30 days
 ; note that a *key* assumption here is that we are working with
@@ -137,6 +142,7 @@ end if
 ; most closely correspond to the NOAH LSM 0-10,10-40,40-100,100-200 cm layers.
 ; these were predetermined based on inspection of the layers
 ; they aren't very important because they get spun up anyway...
+
   TSKIN6   = PS ; dummy
   SNOWW6   = PS ; dummy
   TSOIL1_6 = PS ; dummy
@@ -148,58 +154,61 @@ end if
   MSOIL3_6 = PS ; dummy
   MSOIL4_6 = PS ; dummy
 
-  TSKIN6(0:119,:,:)     = conform(PS(0:119,:,:),  TSKIN(0,:,:),(/1,2/))
-  TSKIN6(120:239,:,:)   = conform(PS(120:239,:,:),TSKIN(1,:,:),(/1,2/))
-  TSKIN6(240::,:,:)     = conform(PS(240::,:,:),  TSKIN(2,:,:),(/1,2/))
+  TSKIN6(0:119,:,:)   = conform(PS(0:119,:,:),TSKIN(0,:,:),(/1,2/))
+  TSKIN6(120:239,:,:) = conform(PS(120:239,:,:),TSKIN(1,:,:),(/1,2/))
+  TSKIN6(240::,:,:)   = conform(PS(240::,:,:),TSKIN(2,:,:),(/1,2/))
 
-  TAVGSFC6              = TSKIN6              ; This can be used for inland lakes
+  TAVGSFC6 = TSKIN6 ; This can be used for inland lakes
 
-  SNOWW6(0:119,:,:)     = conform(PS(0:119,:,:),  SNOWW(0,:,:),(/1,2/))
-  SNOWW6(120:239,:,:)   = conform(PS(120:239,:,:),SNOWW(1,:,:),(/1,2/))
-  SNOWW6(240::,:,:)     = conform(PS(240::,:,:),  SNOWW(2,:,:),(/1,2/))
+  SNOWW6(0:119,:,:)   = conform(PS(0:119,:,:),SNOWW(0,:,:),(/1,2/))
+  SNOWW6(120:239,:,:) = conform(PS(120:239,:,:),SNOWW(1,:,:),(/1,2/))
+  SNOWW6(240::,:,:)   = conform(PS(240::,:,:),SNOWW(2,:,:),(/1,2/))
 
-  TSOIL1_6(0:119,:,:)   = conform(PS(0:119,:,:),  TSOIL(0,2,:,:),(/1,2/))
+  TSOIL1_6(0:119,:,:)   = conform(PS(0:119,:,:),TSOIL(0,2,:,:),(/1,2/))
   TSOIL1_6(120:239,:,:) = conform(PS(120:239,:,:),TSOIL(1,2,:,:),(/1,2/))
-  TSOIL1_6(240::,:,:)   = conform(PS(240::,:,:),  TSOIL(2,2,:,:),(/1,2/))
+  TSOIL1_6(240::,:,:)   = conform(PS(240::,:,:),TSOIL(2,2,:,:),(/1,2/))
 
-  TSOIL2_6(0:119,:,:)   = conform(PS(0:119,:,:),  TSOIL(0,4,:,:),(/1,2/))
+  TSOIL2_6(0:119,:,:)   = conform(PS(0:119,:,:),TSOIL(0,4,:,:),(/1,2/))
   TSOIL2_6(120:239,:,:) = conform(PS(120:239,:,:),TSOIL(1,4,:,:),(/1,2/))
-  TSOIL2_6(240::,:,:)   = conform(PS(240::,:,:),  TSOIL(2,4,:,:),(/1,2/))
+  TSOIL2_6(240::,:,:)   = conform(PS(240::,:,:),TSOIL(2,4,:,:),(/1,2/))
 
-  TSOIL3_6(0:119,:,:)   = conform(PS(0:119,:,:),  TSOIL(0,6,:,:),(/1,2/))
+  TSOIL3_6(0:119,:,:)   = conform(PS(0:119,:,:),TSOIL(0,6,:,:),(/1,2/))
   TSOIL3_6(120:239,:,:) = conform(PS(120:239,:,:),TSOIL(1,6,:,:),(/1,2/))
-  TSOIL3_6(240::,:,:)   = conform(PS(240::,:,:),  TSOIL(2,6,:,:),(/1,2/))
+  TSOIL3_6(240::,:,:)   = conform(PS(240::,:,:),TSOIL(2,6,:,:),(/1,2/))
 
-  TSOIL4_6(0:119,:,:)   = conform(PS(0:119,:,:),  TSOIL(0,8,:,:),(/1,2/))
+  TSOIL4_6(0:119,:,:)   = conform(PS(0:119,:,:),TSOIL(0,8,:,:),(/1,2/))
   TSOIL4_6(120:239,:,:) = conform(PS(120:239,:,:),TSOIL(1,8,:,:),(/1,2/))
-  TSOIL4_6(240::,:,:)   = conform(PS(240::,:,:),  TSOIL(2,8,:,:),(/1,2/))
+  TSOIL4_6(240::,:,:)   = conform(PS(240::,:,:),TSOIL(2,8,:,:),(/1,2/))
 
-  MSOIL1_6(0:119,:,:)   = conform(PS(0:119,:,:),  MSOIL(0,2,:,:),(/1,2/))
+  MSOIL1_6(0:119,:,:)   = conform(PS(0:119,:,:),MSOIL(0,2,:,:),(/1,2/))
   MSOIL1_6(120:239,:,:) = conform(PS(120:239,:,:),MSOIL(1,2,:,:),(/1,2/))
-  MSOIL1_6(240::,:,:)   = conform(PS(240::,:,:),  MSOIL(2,2,:,:),(/1,2/))
+  MSOIL1_6(240::,:,:)   = conform(PS(240::,:,:),MSOIL(2,2,:,:),(/1,2/))
 
-  MSOIL2_6(0:119,:,:)   = conform(PS(0:119,:,:),  MSOIL(0,4,:,:),(/1,2/))
+  MSOIL2_6(0:119,:,:)   = conform(PS(0:119,:,:),MSOIL(0,4,:,:),(/1,2/))
   MSOIL2_6(120:239,:,:) = conform(PS(120:239,:,:),MSOIL(1,4,:,:),(/1,2/))
-  MSOIL2_6(240::,:,:)   = conform(PS(240::,:,:),  MSOIL(2,4,:,:),(/1,2/))
+  MSOIL2_6(240::,:,:)   = conform(PS(240::,:,:),MSOIL(2,4,:,:),(/1,2/))
 
-  MSOIL3_6(0:119,:,:)   = conform(PS(0:119,:,:),  MSOIL(0,6,:,:),(/1,2/))
+  MSOIL3_6(0:119,:,:)   = conform(PS(0:119,:,:),MSOIL(0,6,:,:),(/1,2/))
   MSOIL3_6(120:239,:,:) = conform(PS(120:239,:,:),MSOIL(1,6,:,:),(/1,2/))
-  MSOIL3_6(240::,:,:)   = conform(PS(240::,:,:),  MSOIL(2,6,:,:),(/1,2/))
+  MSOIL3_6(240::,:,:)   = conform(PS(240::,:,:),MSOIL(2,6,:,:),(/1,2/))
 
-  MSOIL4_6(0:119,:,:)   = conform(PS(0:119,:,:),  MSOIL(0,8,:,:),(/1,2/))
+  MSOIL4_6(0:119,:,:)   = conform(PS(0:119,:,:),MSOIL(0,8,:,:),(/1,2/))
   MSOIL4_6(120:239,:,:) = conform(PS(120:239,:,:),MSOIL(1,8,:,:),(/1,2/))
-  MSOIL4_6(240::,:,:)   = conform(PS(240::,:,:),  MSOIL(2,8,:,:),(/1,2/))
+  MSOIL4_6(240::,:,:)   = conform(PS(240::,:,:),MSOIL(2,8,:,:),(/1,2/))
+
 
 ; Set missing values to default for METGRID.TBL
-  TSOIL1_6 = where (ismissing(TSOIL1_6), -1.E30, TSOIL1_6)
-  TSOIL2_6 = where (ismissing(TSOIL2_6), -1.E30, TSOIL2_6)
-  TSOIL3_6 = where (ismissing(TSOIL3_6), -1.E30, TSOIL3_6)
-  TSOIL4_6 = where (ismissing(TSOIL4_6), -1.E30, TSOIL4_6)
 
-  MSOIL1_6 = where (ismissing(MSOIL1_6), -1.E30, MSOIL1_6)
-  MSOIL2_6 = where (ismissing(MSOIL2_6), -1.E30, MSOIL2_6)
-  MSOIL3_6 = where (ismissing(MSOIL3_6), -1.E30, MSOIL3_6)
-  MSOIL4_6 = where (ismissing(MSOIL4_6), -1.E30, MSOIL4_6)
+  TSOIL1_6 = where(ismissing(TSOIL1_6),-1.E30,TSOIL1_6)
+  TSOIL2_6 = where(ismissing(TSOIL2_6),-1.E30,TSOIL2_6)
+  TSOIL3_6 = where(ismissing(TSOIL3_6),-1.E30,TSOIL3_6)
+  TSOIL4_6 = where(ismissing(TSOIL4_6),-1.E30,TSOIL4_6)
+
+  MSOIL1_6 = where(ismissing(MSOIL1_6),-1.E30,MSOIL1_6)
+  MSOIL2_6 = where(ismissing(MSOIL2_6),-1.E30,MSOIL2_6)
+  MSOIL3_6 = where(ismissing(MSOIL3_6),-1.E30,MSOIL3_6)
+  MSOIL4_6 = where(ismissing(MSOIL4_6),-1.E30,MSOIL4_6)
+
 
 ; Get bottom level temperature for vertical extrapolation
   TBOT = T(:,0,:,:)
