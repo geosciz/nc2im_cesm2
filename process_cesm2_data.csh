@@ -176,8 +176,8 @@ while ( $doYY <= $endYY )
      ln -s ${topDIR}/snw_*.nc atmos_snw.nc
      cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_snw.nc atmos_snw_1.nc
 
-     ln -s ${topDIR}/mrso_*.nc atmos_mrlsl.nc
-     cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_mrlsl.nc atmos_mrlsl_1.nc
+     #ln -s ${topDIR}/mrso_*.nc atmos_mrlsl.nc
+     #cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_mrlsl.nc atmos_mrlsl_1.nc
 
      ln -s ${topDIR}/tsl_*.nc atmos_tsl.nc
      cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_tsl.nc atmos_tsl_1.nc
