@@ -186,7 +186,7 @@ while ( $doYY <= $endYY )
      cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_tos.nc atmos_tos_1.nc
 
     # Unfortunately this data is not available on the glade directory - get from HPSS - run get_seaice.csh to downlowd data first
-     ln -s ${topDIR}/siconca_*.nc atmos_sic.nc
+     ln -s ${topDIR}/siconc_*.nc atmos_sic.nc
      cdo seldate,${yyyy}-${smm}-${sdd},${yyyy}-${emm}-${edd} atmos_sic.nc atmos_sic_1.nc
     # set test_month = $months
     # cp ./SEAICE/${CASE_glade}_sic_pct_${yyyy}-${smm}.nc   atmos_sic_1.nc

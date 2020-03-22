@@ -60,7 +60,7 @@ end if
   in_zsfc  = addfile("atmos_zsfc.nc","r")    ; static surface geopotential
   in_lmask = addfile("atmos_lmask.nc","r")   ; static land mask
   in_snw   = addfile("atmos_snw_1.nc","r")   ; monthly SWE
-  in_mrlsl = addfile("atmos_mrlsl_1.nc","r") ; monthly soil moisture
+  ;in_mrlsl = addfile("atmos_mrlsl_1.nc","r") ; monthly soil moisture
   in_ts    = addfile("atmos_ts_1.nc","r")    ; monthly skin temp
   in_tsl   = addfile("atmos_tsl_1.nc","r")   ; monthly soil temp
   in_tos   = addfile("atmos_tos_1.nc","r")   ; daily SST on pop grid (gaussian)
@@ -84,7 +84,7 @@ end if
   PHIS = in_zsfc->PHIS
   ZSFC = PHIS/9.81
   SST_DAY_POP = in_tos->tos
-  ICE_DAY_POP = in_sic->siconca*0.01 ; convert from % to fraction
+  ICE_DAY_POP = in_sic->siconc*0.01 ; convert from % to fraction
   PS  = in_ps->ps
   LAT = in_ta->lat
 
@@ -100,21 +100,21 @@ end if
 
 ; interpolate SST and SEA ICE fields to CESM Atmospheric domain from POP Ocean domain
 
-  SST_DAY = PopLatLon(SST_DAY_POP,"gx1v6","fv0.9x1.25","bilin","da","090309")
-  SST6 = new((/ntim,nlat,nlon/),float) ; create a 6 hourly variable and repeat 4x daily
-  SST6(::4,:,:) = SST_DAY
-  SST6(1::4,:,:) = SST_DAY
-  SST6(2::4,:,:) = SST_DAY
-  SST6(3::4,:,:) = SST_DAY
-  SST6 = where(ismissing(SST6),-1.E30, SST6) ; set missing value to default for METGRID.TBL
+  ;SST_DAY = PopLatLon(SST_DAY_POP,"gx1v6","fv0.9x1.25","bilin","da","090309")
+  ;SST6 = new((/ntim,nlat,nlon/),float) ; create a 6 hourly variable and repeat 4x daily
+  ;SST6(::4,:,:) = SST_DAY
+  ;SST6(1::4,:,:) = SST_DAY
+  ;SST6(2::4,:,:) = SST_DAY
+  ;SST6(3::4,:,:) = SST_DAY
+  ;SST6 = where(ismissing(SST6),-1.E30, SST6) ; set missing value to default for METGRID.TBL
 
-  ICE_DAY = PopLatLon(ICE_DAY_POP,"gx1v6","fv0.9x1.25","bilin","da","090309")
-  ICE6 = new((/ntim,nlat,nlon/),float) ; create a 6 hourly variable and repeat 4x daily
-  ICE6(::4,:,:) = ICE_DAY
-  ICE6(1::4,:,:) = ICE_DAY
-  ICE6(2::4,:,:) = ICE_DAY
-  ICE6(3::4,:,:) = ICE_DAY
-  ICE6 = where(ismissing(ICE6),-1.E30,ICE6) ; set missing value to default for METGRID.TBL
+  ;ICE_DAY = PopLatLon(ICE_DAY_POP,"gx1v6","fv0.9x1.25","bilin","da","090309")
+  ;ICE6 = new((/ntim,nlat,nlon/),float) ; create a 6 hourly variable and repeat 4x daily
+  ;ICE6(::4,:,:) = ICE_DAY
+  ;ICE6(1::4,:,:) = ICE_DAY
+  ;ICE6(2::4,:,:) = ICE_DAY
+  ;ICE6(3::4,:,:) = ICE_DAY
+  ;ICE6 = where(ismissing(ICE6),-1.E30,ICE6) ; set missing value to default for METGRID.TBL
 
 
 ; read in monthly variables and make into 6-hourly
@@ -124,13 +124,13 @@ end if
   TSKIN = in_ts->ts
   SNOWW = in_snw->snw
   TSOIL = in_tsl->tsl
-  MSOIL = in_mrlsl->mrlsl
-  SOILD = in_mrlsl->depth
+  ;MSOIL = in_mrlsl->mrlsl
+  ;SOILD = in_mrlsl->depth
 
 
 ; convert MSOIL from kg m-2 to fraction
 
-  MSOIL = doubletofloat(MSOIL/(1000.*conform(MSOIL,SOILD,1)))
+  ;MSOIL = doubletofloat(MSOIL/(1000.*conform(MSOIL,SOILD,1)))
 
 
 ; now make into 6 hourly variables that change every ~30 days
@@ -147,10 +147,10 @@ end if
   TSOIL2_6 = PS ; dummy
   TSOIL3_6 = PS ; dummy
   TSOIL4_6 = PS ; dummy
-  MSOIL1_6 = PS ; dummy
-  MSOIL2_6 = PS ; dummy
-  MSOIL3_6 = PS ; dummy
-  MSOIL4_6 = PS ; dummy
+  ;MSOIL1_6 = PS ; dummy
+  ;MSOIL2_6 = PS ; dummy
+  ;MSOIL3_6 = PS ; dummy
+  ;MSOIL4_6 = PS ; dummy
 
   TSKIN6(0:119,:,:)   = conform(PS(0:119,:,:),TSKIN(0,:,:),(/1,2/))
   TSKIN6(120:239,:,:) = conform(PS(120:239,:,:),TSKIN(1,:,:),(/1,2/))
@@ -178,21 +178,21 @@ end if
   TSOIL4_6(120:239,:,:) = conform(PS(120:239,:,:),TSOIL(1,8,:,:),(/1,2/))
   TSOIL4_6(240::,:,:)   = conform(PS(240::,:,:),TSOIL(2,8,:,:),(/1,2/))
 
-  MSOIL1_6(0:119,:,:)   = conform(PS(0:119,:,:),MSOIL(0,2,:,:),(/1,2/))
-  MSOIL1_6(120:239,:,:) = conform(PS(120:239,:,:),MSOIL(1,2,:,:),(/1,2/))
-  MSOIL1_6(240::,:,:)   = conform(PS(240::,:,:),MSOIL(2,2,:,:),(/1,2/))
+  ;MSOIL1_6(0:119,:,:)   = conform(PS(0:119,:,:),MSOIL(0,2,:,:),(/1,2/))
+  ;MSOIL1_6(120:239,:,:) = conform(PS(120:239,:,:),MSOIL(1,2,:,:),(/1,2/))
+  ;MSOIL1_6(240::,:,:)   = conform(PS(240::,:,:),MSOIL(2,2,:,:),(/1,2/))
 
-  MSOIL2_6(0:119,:,:)   = conform(PS(0:119,:,:),MSOIL(0,4,:,:),(/1,2/))
-  MSOIL2_6(120:239,:,:) = conform(PS(120:239,:,:),MSOIL(1,4,:,:),(/1,2/))
-  MSOIL2_6(240::,:,:)   = conform(PS(240::,:,:),MSOIL(2,4,:,:),(/1,2/))
+  ;MSOIL2_6(0:119,:,:)   = conform(PS(0:119,:,:),MSOIL(0,4,:,:),(/1,2/))
+  ;MSOIL2_6(120:239,:,:) = conform(PS(120:239,:,:),MSOIL(1,4,:,:),(/1,2/))
+  ;MSOIL2_6(240::,:,:)   = conform(PS(240::,:,:),MSOIL(2,4,:,:),(/1,2/))
 
-  MSOIL3_6(0:119,:,:)   = conform(PS(0:119,:,:),MSOIL(0,6,:,:),(/1,2/))
-  MSOIL3_6(120:239,:,:) = conform(PS(120:239,:,:),MSOIL(1,6,:,:),(/1,2/))
-  MSOIL3_6(240::,:,:)   = conform(PS(240::,:,:),MSOIL(2,6,:,:),(/1,2/))
+  ;MSOIL3_6(0:119,:,:)   = conform(PS(0:119,:,:),MSOIL(0,6,:,:),(/1,2/))
+  ;MSOIL3_6(120:239,:,:) = conform(PS(120:239,:,:),MSOIL(1,6,:,:),(/1,2/))
+  ;MSOIL3_6(240::,:,:)   = conform(PS(240::,:,:),MSOIL(2,6,:,:),(/1,2/))
 
-  MSOIL4_6(0:119,:,:)   = conform(PS(0:119,:,:),MSOIL(0,8,:,:),(/1,2/))
-  MSOIL4_6(120:239,:,:) = conform(PS(120:239,:,:),MSOIL(1,8,:,:),(/1,2/))
-  MSOIL4_6(240::,:,:)   = conform(PS(240::,:,:),MSOIL(2,8,:,:),(/1,2/))
+  ;MSOIL4_6(0:119,:,:)   = conform(PS(0:119,:,:),MSOIL(0,8,:,:),(/1,2/))
+  ;MSOIL4_6(120:239,:,:) = conform(PS(120:239,:,:),MSOIL(1,8,:,:),(/1,2/))
+  ;MSOIL4_6(240::,:,:)   = conform(PS(240::,:,:),MSOIL(2,8,:,:),(/1,2/))
 
 
 ; set missing values to default for METGRID.TBL
@@ -202,10 +202,10 @@ end if
   TSOIL3_6 = where(ismissing(TSOIL3_6),-1.E30,TSOIL3_6)
   TSOIL4_6 = where(ismissing(TSOIL4_6),-1.E30,TSOIL4_6)
 
-  MSOIL1_6 = where(ismissing(MSOIL1_6),-1.E30,MSOIL1_6)
-  MSOIL2_6 = where(ismissing(MSOIL2_6),-1.E30,MSOIL2_6)
-  MSOIL3_6 = where(ismissing(MSOIL3_6),-1.E30,MSOIL3_6)
-  MSOIL4_6 = where(ismissing(MSOIL4_6),-1.E30,MSOIL4_6)
+  ;MSOIL1_6 = where(ismissing(MSOIL1_6),-1.E30,MSOIL1_6)
+  ;MSOIL2_6 = where(ismissing(MSOIL2_6),-1.E30,MSOIL2_6)
+  ;MSOIL3_6 = where(ismissing(MSOIL3_6),-1.E30,MSOIL3_6)
+  ;MSOIL4_6 = where(ismissing(MSOIL4_6),-1.E30,MSOIL4_6)
 
 
 ; get bottom level temperature for vertical extrapolation
@@ -218,18 +218,16 @@ end if
 
   TV = T
   TV = T*(1.+0.61*Q)
-  P = T->lev
+  P = T
   Z = T
-  Z = hydro(P,TV(:,::-1,:,:),ZSFC)
-  Z = Z(:,::-1,:,:) ; reorder vertical so consistent with T,U,V, and Q (bottom up)
+  ;Z = hydro(P,TV(:,::-1,:,:),ZSFC)
+  ;Z = Z(:,::-1,:,:) ; reorder vertical so consistent with T,U,V, and Q (bottom up)
 
 
 ; calculate the pressures on each hybrid level (bottom up)
 
   print ("calculate P")
-
   P = T
-  P = T->lev
 
 ; uses stock RH function in NCL
 
@@ -251,7 +249,7 @@ end if
   print("calculate near surface variables")
 
   T2 = PS
-  T2 = T(:,1,:,:)-(T(:,1,:,:)-T(:,0,:,:))*((log(PS)-log(P(:,1,:,:)))/(log(P(:,0,:,:))-log(P(:,1,:,:))))
+  ;T2 = T(:,1,:,:)-(T(:,1,:,:)-T(:,0,:,:))*((log(PS)-log(P(:,1,:,:)))/(log(P(:,0,:,:))-log(P(:,1,:,:))))
   R2 = R(:,0,:,:)
   U10 = doubletofloat(U(:,0,:,:)*((10./(Z(:,0,:,:)-conform(PS,ZSFC,(/1,2/))))^0.145))
   V10 = doubletofloat(V(:,0,:,:)*((10./(Z(:,0,:,:)-conform(PS,ZSFC,(/1,2/))))^0.145))
@@ -448,17 +446,17 @@ end if
     wrf_wps_write_int(IM_root_name,FIELD_ZSFC,UNITS_ZSFC,DESC_ZSFC,doubletofloat(ZSFC(:,:)),opt)
     wrf_wps_write_int(IM_root_name,FIELD_TSKIN6,UNITS_TSKIN6,DESC_TSKIN6,TSKIN6(TIM,:,:),opt)
     wrf_wps_write_int(IM_root_name,FIELD_TAVGSFC6,UNITS_TAVGSFC6,DESC_TAVGSFC6, TAVGSFC6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_SST6,UNITS_SST6,DESC_SST6,SST6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_ICE6,UNITS_ICE6,DESC_ICE6,ICE6(TIM,:,:),opt)
+    ;wrf_wps_write_int(IM_root_name,FIELD_SST6,UNITS_SST6,DESC_SST6,SST6(TIM,:,:),opt)
+    ;wrf_wps_write_int(IM_root_name,FIELD_ICE6,UNITS_ICE6,DESC_ICE6,ICE6(TIM,:,:),opt)
     wrf_wps_write_int(IM_root_name,FIELD_SNOWW6,UNITS_SNOWW6,DESC_SNOWW6,SNOWW6(TIM,:,:),opt)
     wrf_wps_write_int(IM_root_name,FIELD_TSOIL1_6,UNITS_TSOIL1_6,DESC_TSOIL1_6,TSOIL1_6(TIM,:,:),opt)
     wrf_wps_write_int(IM_root_name,FIELD_TSOIL2_6,UNITS_TSOIL2_6,DESC_TSOIL2_6,TSOIL2_6(TIM,:,:),opt)
     wrf_wps_write_int(IM_root_name,FIELD_TSOIL3_6,UNITS_TSOIL3_6,DESC_TSOIL3_6,TSOIL3_6(TIM,:,:),opt)
     wrf_wps_write_int(IM_root_name,FIELD_TSOIL4_6,UNITS_TSOIL4_6,DESC_TSOIL4_6,TSOIL4_6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_MSOIL1_6,UNITS_MSOIL1_6,DESC_MSOIL1_6,MSOIL1_6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_MSOIL2_6,UNITS_MSOIL2_6,DESC_MSOIL2_6,MSOIL2_6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_MSOIL3_6,UNITS_MSOIL3_6,DESC_MSOIL3_6,MSOIL3_6(TIM,:,:),opt)
-    wrf_wps_write_int(IM_root_name,FIELD_MSOIL4_6,UNITS_MSOIL4_6,DESC_MSOIL4_6,MSOIL4_6(TIM,:,:),opt)
+    ;wrf_wps_write_int(IM_root_name,FIELD_MSOIL1_6,UNITS_MSOIL1_6,DESC_MSOIL1_6,MSOIL1_6(TIM,:,:),opt)
+    ;wrf_wps_write_int(IM_root_name,FIELD_MSOIL2_6,UNITS_MSOIL2_6,DESC_MSOIL2_6,MSOIL2_6(TIM,:,:),opt)
+    ;wrf_wps_write_int(IM_root_name,FIELD_MSOIL3_6,UNITS_MSOIL3_6,DESC_MSOIL3_6,MSOIL3_6(TIM,:,:),opt)
+    ;wrf_wps_write_int(IM_root_name,FIELD_MSOIL4_6,UNITS_MSOIL4_6,DESC_MSOIL4_6,MSOIL4_6(TIM,:,:),opt)
 
     opt@level = XLVL_SLP ; need a different level for SLP
     wrf_wps_write_int(IM_root_name,FIELD_SLP,UNITS_SLP,DESC_SLP, SLP(:,:),opt)
@@ -473,14 +471,14 @@ end if
 
     ; write each level of the 3D fields out separately
 
-    do LEV=0,dimsizes(pnew)-1
-      opt@level = pnew(LEV)*100.
-      wrf_wps_write_int(IM_root_name,FIELD_U,UNITS_U,DESC_U,U(LEV,:,:),opt)
-      wrf_wps_write_int(IM_root_name,FIELD_V,UNITS_V,DESC_V,V(LEV,:,:),opt)
-      wrf_wps_write_int(IM_root_name,FIELD_T,UNITS_T,DESC_T,T(LEV,:,:),opt)
-      wrf_wps_write_int(IM_root_name,FIELD_R,UNITS_R,DESC_R,R(LEV,:,:),opt)
-      wrf_wps_write_int(IM_root_name,FIELD_Z,UNITS_Z,DESC_Z,Z(LEV,:,:),opt)
-    end do
+    ;do LEV=0,dimsizes(pnew)-1
+    ;  opt@level = pnew(LEV)*100.
+    ;  wrf_wps_write_int(IM_root_name,FIELD_U,UNITS_U,DESC_U,U(LEV,:,:),opt)
+    ;  wrf_wps_write_int(IM_root_name,FIELD_V,UNITS_V,DESC_V,V(LEV,:,:),opt)
+    ;  wrf_wps_write_int(IM_root_name,FIELD_T,UNITS_T,DESC_T,T(LEV,:,:),opt)
+    ;  wrf_wps_write_int(IM_root_name,FIELD_R,UNITS_R,DESC_R,R(LEV,:,:),opt)
+    ;  wrf_wps_write_int(IM_root_name,FIELD_Z,UNITS_Z,DESC_Z,Z(LEV,:,:),opt)
+    ;end do
 
 
     ; move the file to the outDIR directory
