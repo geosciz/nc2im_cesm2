@@ -7,9 +7,9 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/popRemap.ncl"
 begin
 
     data_dir  = "/home/zhangc/scenariomip_cmip6/"
-    data_time = "2015-01-01_00:00:00"
+    ;file_time = "2015-01-01_00:00:00"
 
-    ta = addfile(data_dir+"ta_"+data_time+".nc","r")
+    ta = addfile(data_dir+"ta_"+file_time+".nc","r")
 
     time = ta->time
     lon  = ta->lon
@@ -45,21 +45,11 @@ begin
 
     print("TIME = "+TIME)
 
-    system("mkdir -p "+ODIR+"/"+YEAR)
-    system("rm "+FILE)
-    system("rm "+ODIR+"/"+YEAR+"/"+FILE)
-
     opt@date = TIME
 
     do i=0,dimsizes(lev)-1
         opt@level = -doubletofloat(lev(i))*100.
         wrf_wps_write_int(ROOT,field_t,units_t,descr_t,T(i,:,:),opt)
     end do
-
-    print ("mv "+FILE+" "+ODIR+"/"+YEAR+"/.")
-    system("mv "+FILE+" "+ODIR+"/"+YEAR+"/.")
-
-    delete(TIME)
-    delete(FILE)
 
 end
