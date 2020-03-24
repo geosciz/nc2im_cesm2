@@ -37,7 +37,8 @@ begin
     opt@deltalat               = doubletofloat(lat(1)-lat(0))
     opt@is_wind_earth_relative = False
 
-    time_format = "%Y-%N-%D_%H:00:0000000"
+    time_format1 = "%Y-%N-%D_%H:00:0000000"
+    time_format2 = "%Y-%N-%D_%H"
 
     ; 3-d air temperature
     field_t = "TT"
@@ -59,20 +60,22 @@ begin
     units_v = "m s-1"
     descr_v = "3-D Wind V-Component"
 
-    TIME = cd_string(time, time_format)
-    file_pref = "CESM2_SCENARIOMIP_CMIP6_SSP245"
-    ROOT = data_path + file_pref
+    HDATE = cd_string(time, time_format1)
+    file_pref = "CESM2_SCENARIOMIP_SSP245"
+    OFILE = file_pref + ":" + cd_string(time, time_format2)
+    root_name = data_path + file_pref
 
-    print("TIME = "+TIME)
+    command = "rm " + data_path + OFILE
+    system(command)
 
-    opt@date = TIME
+    opt@date = HDATE
 
     do i=0,dimsizes(lev)-1
         opt@level = -doubletofloat(lev(i))*100.
-        wrf_wps_write_int(ROOT,field_t,units_t,descr_t,T(i,:,:),opt)
-        wrf_wps_write_int(ROOT,field_q,units_q,descr_q,Q(i,:,:),opt)
-        wrf_wps_write_int(ROOT,field_u,units_u,descr_u,U(i,:,:),opt)
-        wrf_wps_write_int(ROOT,field_v,units_v,descr_v,V(i,:,:),opt)
+        wrf_wps_write_int(root_name,field_t,units_t,descr_t,T(i,:,:),opt)
+        wrf_wps_write_int(root_name,field_q,units_q,descr_q,Q(i,:,:),opt)
+        wrf_wps_write_int(root_name,field_u,units_u,descr_u,U(i,:,:),opt)
+        wrf_wps_write_int(root_name,field_v,units_v,descr_v,V(i,:,:),opt)
     end do
 
 end
