@@ -6,15 +6,16 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/popRemap.ncl"
 
 begin
 
-    nc_dir  = "/home/zhangc/scenariomip_cmip6/nc_data/"
+    data_path  = "/home/zhangc/scenariomip_cmip6/im_data/"
     file_time = "2015-01-01_00:00:00"
 
-    ta  = addfile(nc_dir+"ta_"+file_time+".nc","r")
-    hus = addfile(nc_dir+"hus_"+file_time+".nc","r")
-    ua  = addfile(nc_dir+"ua_"+file_time+".nc","r")
-    va  = addfile(nc_dir+"va_"+file_time+".nc","r")
+    ta  = addfile(data_path+"ta_"+file_time+".nc","r")
+    hus = addfile(data_path+"hus_"+file_time+".nc","r")
+    ua  = addfile(data_path+"ua_"+file_time+".nc","r")
+    va  = addfile(data_path+"va_"+file_time+".nc","r")
 
-    system("rm "+data_dir+"*"+file_time+"*")
+    command = "rm " + data_path + "*" + file_time + "*"
+    system(command)
 
     time = ta->time
     lon  = ta->lon
@@ -37,8 +38,6 @@ begin
     opt@is_wind_earth_relative = False
 
     time_format = "%Y-%N-%D_%H:00:0000000"
-    date_format = "%Y-%N-%D_%H"
-    year_format = "%Y"
 
     ; 3-d air temperature
     field_t = "TT"
@@ -61,9 +60,8 @@ begin
     descr_v = "3-D Wind V-Component"
 
     TIME = cd_string(time, time_format)
-    im_dir = "/home/zhangc/scenariomip_cmip6/im_data/"
-    file_pref = "CESM2_SCENARIOMIP_CMIP6"
-    ROOT = im_dir+file_pref
+    file_pref = "CESM2_SCENARIOMIP_CMIP6_SSP245"
+    ROOT = data_path + file_pref
 
     print("TIME = "+TIME)
 
