@@ -75,11 +75,11 @@ chdir(os_path)
 # In[ ]:
 
 
-bash_command = 'ncl convert_nc_to_im.ncl ' + "'file_time=" + '"' + file_time + '"' + "'"
+command = 'ncl convert_nc_to_im.ncl ' + "'file_time=" + '"' + file_time + '"' + "'"
 
 
 # In[ ]:
 
 
-system(bash_command)
+system(command)
 
