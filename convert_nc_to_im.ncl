@@ -6,13 +6,13 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/popRemap.ncl"
 
 begin
 
-    data_dir  = "/home/zhangc/scenariomip_cmip6/"
+    nc_dir  = "/home/zhangc/scenariomip_cmip6/nc_data/"
     file_time = "2015-01-01_00:00:00"
 
-    ta  = addfile(data_dir+"ta_"+file_time+".nc","r")
-    hus = addfile(data_dir+"hus_"+file_time+".nc","r")
-    ua  = addfile(data_dir+"ua_"+file_time+".nc","r")
-    va  = addfile(data_dir+"va_"+file_time+".nc","r")
+    ta  = addfile(nc_dir+"ta_"+file_time+".nc","r")
+    hus = addfile(nc_dir+"hus_"+file_time+".nc","r")
+    ua  = addfile(nc_dir+"ua_"+file_time+".nc","r")
+    va  = addfile(nc_dir+"va_"+file_time+".nc","r")
 
     system("rm "+data_dir+"*"+file_time+"*")
 
@@ -60,12 +60,10 @@ begin
     units_v = "m s-1"
     descr_v = "3-D Wind V-Component"
 
-
-    ODIR = "/home/zhangc/senariomip_cmip6/data"
     TIME = cd_string(time, time_format)
-    ROOT = "CESM2"
-    FILE = ROOT + "_" + cd_string(time, date_format)
-    YEAR  = cd_string(time, year_format)
+    im_dir = "/home/zhangc/scenariomip_cmip6/im_data/"
+    file_pref = "CESM2_SCENARIOMIP_CMIP6"
+    ROOT = im_dir+file_pref
 
     print("TIME = "+TIME)
 
