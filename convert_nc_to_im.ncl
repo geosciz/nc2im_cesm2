@@ -13,7 +13,9 @@ begin
     hus = addfile(data_path+"hus_"+file_time+".nc","r")
     ua  = addfile(data_path+"ua_"+file_time+".nc","r")
     va  = addfile(data_path+"va_"+file_time+".nc","r")
+    p   = addfile(data_path+"p_"+file_time+".nc","r")
     ps  = addfile(data_path+"ps_"+file_time+".nc","r")
+    ts  = addfile(data_path+"ts_"+file_time+".nc","r")
 
     command = "rm " + data_path + "*" + file_time + "*"
     system(command)
@@ -27,7 +29,9 @@ begin
     Q  = hus->hus
     U  = ua->ua
     V  = va->va
+    P  = p->p
     PS = ps->ps
+    TS = ts->ts
 
     opt = True
     opt@map_source             = "CESM2"
@@ -72,6 +76,11 @@ begin
     units_ps = "Pa"
     descr_ps = "Surface Pressure"
 
+    ; skin temperature
+    field_ts = "SKINTEMP"
+    units_ts = "K"
+    descr_ts = "Skin Temperature"
+
     HDATE = cd_string(time, time_format1)
     file_pref = "CESM2_SCENARIOMIP_SSP245"
     OFILE = file_pref + ":" + cd_string(time, time_format2)
@@ -83,6 +92,7 @@ begin
     opt@date = HDATE
 
     opt@level = 200100.
+    wrf_wps_write_int(root_name,field_ts,units_ts,descr_ts,TS(:,:),opt)
     wrf_wps_write_int(root_name,field_ps,units_ps,descr_ps,PS(:,:),opt)
 
     do i=0,dimsizes(lev)-1
