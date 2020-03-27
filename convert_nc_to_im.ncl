@@ -60,6 +60,11 @@ begin
     units_v = "m s-1"
     descr_v = "3-D Wind V-Component"
 
+    ; 3-d geopotential height
+    field_z = "GHT"
+    units_z = "m"
+    descr_z = "3-D Geopotential Height"
+
     HDATE = cd_string(time, time_format1)
     file_pref = "CESM2_SCENARIOMIP_SSP245"
     OFILE = file_pref + ":" + cd_string(time, time_format2)
@@ -76,6 +81,7 @@ begin
         wrf_wps_write_int(root_name,field_q,units_q,descr_q,Q(i,:,:),opt)
         wrf_wps_write_int(root_name,field_u,units_u,descr_u,U(i,:,:),opt)
         wrf_wps_write_int(root_name,field_v,units_v,descr_v,V(i,:,:),opt)
+        wrf_wps_write_int(root_name,field_z,units_z,descr_z,Z(i,:,:),opt)
     end do
 
 end
