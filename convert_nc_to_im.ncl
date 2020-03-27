@@ -33,6 +33,10 @@ begin
     PS = ps->ps
     TS = ts->ts
 
+    ; 3-d geopotential height
+    TV = T*(1.+0.61*Q)
+    Z  = hydro(P,TV,ZSFC)
+
     opt = True
     opt@map_source             = "CESM2"
     opt@projection             = 0
