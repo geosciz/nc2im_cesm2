@@ -13,6 +13,7 @@ begin
     hus = addfile(data_path+"hus_"+file_time+".nc","r")
     ua  = addfile(data_path+"ua_"+file_time+".nc","r")
     va  = addfile(data_path+"va_"+file_time+".nc","r")
+    ps  = addfile(data_path+"ps_"+file_time+".nc","r")
 
     command = "rm " + data_path + "*" + file_time + "*"
     system(command)
@@ -22,13 +23,14 @@ begin
     lat  = ta->lat
     lev  = ta->lev
 
-    T = ta->ta
-    Q = hus->hus
-    U = ua->ua
-    V = va->va
+    T  = ta->ta
+    Q  = hus->hus
+    U  = ua->ua
+    V  = va->va
+    PS = ps->ps
 
     opt = True
-    opt@map_source             = " "
+    opt@map_source             = "CESM2"
     opt@projection             = 0
     opt@startloc               = "SWCORNER"
     opt@startlon               = doubletofloat(lon(0))
@@ -65,6 +67,11 @@ begin
     units_z = "m"
     descr_z = "3-D Geopotential Height"
 
+    ; surface pressure
+    field_ps = "PSFC"
+    units_ps = "Pa"
+    descr_ps = "Surface Pressure"
+
     HDATE = cd_string(time, time_format1)
     file_pref = "CESM2_SCENARIOMIP_SSP245"
     OFILE = file_pref + ":" + cd_string(time, time_format2)
@@ -75,13 +82,15 @@ begin
 
     opt@date = HDATE
 
+    opt@level = 200100.
+    wrf_wps_write_int(root_name,field_ps,units_ps,descr_ps,PS(:,:),opt)
+
     do i=0,dimsizes(lev)-1
         opt@level = -doubletofloat(lev(i))*100.
         wrf_wps_write_int(root_name,field_t,units_t,descr_t,T(i,:,:),opt)
         wrf_wps_write_int(root_name,field_q,units_q,descr_q,Q(i,:,:),opt)
         wrf_wps_write_int(root_name,field_u,units_u,descr_u,U(i,:,:),opt)
         wrf_wps_write_int(root_name,field_v,units_v,descr_v,V(i,:,:),opt)
-        wrf_wps_write_int(root_name,field_z,units_z,descr_z,Z(i,:,:),opt)
     end do
 
 end
