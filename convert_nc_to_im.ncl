@@ -16,8 +16,6 @@ begin
     p   = addfile(data_path+"p_"+file_time+".nc","r")
     ps  = addfile(data_path+"ps_"+file_time+".nc","r")
     ts  = addfile(data_path+"ts_"+file_time+".nc","r")
-    tv  = addfile(data_path+"tv_"+file_time+".nc","r")
-    zsfc  = addfile(data_path+"zsfc_"+file_time+".nc","r")
 
     command = "rm " + data_path + "*" + file_time + "*"
     ;system(command)
@@ -34,12 +32,6 @@ begin
     P  = p->p
     PS = ps->ps
     TS = ts->ts
-    ZSFC = zsfc->PHIS
-
-    ; 3-d geopotential height
-    TV = tv->tv
-    Z  = hydro(P(lat|:,lon|:,lev|:),TV(lat|:,lon|:,lev|:),ZSFC)
-    print(Z)
 
     opt = True
     opt@map_source             = "CESM2"
