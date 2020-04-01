@@ -25,11 +25,11 @@ begin
     lat  = ta->lat
     lev  = ta->lev
 
-    T  = ta->ta
-    Q  = hus->hus
-    U  = ua->ua
-    V  = va->va
-    P  = p->p
+    T3 = ta->ta
+    Q3 = hus->hus
+    U3 = ua->ua
+    V3 = va->va
+    P3 = p->p
     PS = ps->ps
     TS = ts->ts
 
@@ -46,40 +46,75 @@ begin
     time_format1 = "%Y-%N-%D_%H:00:0000000"
     time_format2 = "%Y-%N-%D_%H"
 
-    ; 3-d air temperature
-    field_t = "TT"
-    units_t = "K"
-    descr_t = "3-D Air Temperature"
+    ; T3
+    field_t3 = "TT"
+    units_t3 = "K"
+    descr_t3 = "3-D Air Temperature"
 
-    ; 3-d specific humidity
-    field_q = "SPECHUMD"
-    units_q = "kg kg-1"
-    descr_q = "3-D Specific Humidity"
+    ; Q3
+    field_q3 = "SPECHUMD"
+    units_q3 = "kg kg-1"
+    descr_q3 = "3-D Specific Humidity"
 
-    ; 3-d wind u-component
-    field_u = "UU"
-    units_u = "m s-1"
-    descr_u = "3-D Wind U-Component"
+    ; U3
+    field_u3 = "UU"
+    units_u3 = "m s-1"
+    descr_u3 = "3-D Wind U-Component"
 
-    ; 3-d wind v-component
-    field_v = "VV"
-    units_v = "m s-1"
-    descr_v = "3-D Wind V-Component"
+    ; V3
+    field_v3 = "VV"
+    units_v3 = "m s-1"
+    descr_v3 = "3-D Wind V-Component"
 
     ; 3-d geopotential height
-    field_z = "GHT"
-    units_z = "m"
-    descr_z = "3-D Geopotential Height"
+    field_z3 = "GHT"
+    units_z3 = "m"
+    descr_z3 = "3-D Geopotential Height"
 
-    ; surface pressure
+    ; PS
     field_ps = "PSFC"
     units_ps = "Pa"
     descr_ps = "Surface Pressure"
 
-    ; skin temperature
+    ; mean sea-level pressure
+    filed_ = "PMSL"
+    units_ = "Pa"
+    descr_ = "Mean Sea-Level Pressure"
+
+    ; TS
     field_ts = "SKINTEMP"
     units_ts = "K"
     descr_ts = "Skin Temperature"
+
+    ; soil height
+    field_ = "SOILHGT"
+    units_ = "m"
+    descr_ = "Soil Height"
+
+    ; T2
+    field_t2 = "TT"
+    units_t2 = "K"
+    descr_t2 = "2-Meter Air Temperature"
+
+    ; Q2
+    field_q2 = "SPECHUMD"
+    units_q2 = "kg kg-1"
+    descr_q2 = "2-Meter Specific Humidity"
+
+    ; U2
+    field_u2 = "UU"
+    units_u2 = "m s-1"
+    descr_u2 = "2-Meter Wind U-Component"
+
+    ; V2
+    field_v2 = "VV"
+    units_v2 = "m s-1"
+    descr_v2 = "2-Meter Wind V-Component"
+
+    ; LS
+    field_ls = "LANDSEA"
+    units_ls = "fraction"
+    descr_ls = "Land-Sea Mask (0=Water, 1=Land)"
 
     HDATE = cd_string(time, time_format1)
     file_pref = "CESM2_SCENARIOMIP_SSP245"
