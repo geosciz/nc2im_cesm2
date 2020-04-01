@@ -66,7 +66,7 @@ begin
     units_v3 = "m s-1"
     descr_v3 = "3-D Wind V-Component"
 
-    ; 3-d geopotential height
+    ; Z3
     field_z3 = "GHT"
     units_z3 = "m"
     descr_z3 = "3-D Geopotential Height"
@@ -127,15 +127,20 @@ begin
     opt@date = HDATE
 
     opt@level = 200100.
-    wrf_wps_write_int(root_name,field_ts,units_ts,descr_ts,TS(:,:),opt)
     wrf_wps_write_int(root_name,field_ps,units_ps,descr_ps,PS(:,:),opt)
+    wrf_wps_write_int(root_name,field_ts,units_ts,descr_ts,TS(:,:),opt)
+    ;wrf_wps_write_int(root_name,field_t2,units_t2,descr_t2,T2(:,:),opt)
+    ;wrf_wps_write_int(root_name,field_q2,units_q2,descr_q2,Q2(:,:),opt)
+    ;wrf_wps_write_int(root_name,field_u2,units_u2,descr_u2,U2(:,:),opt)
+    ;wrf_wps_write_int(root_name,field_v2,units_v2,descr_v2,V2(:,:),opt)
 
     do i=0,dimsizes(lev)-1
         opt@level = -doubletofloat(lev(i))*100.
-        wrf_wps_write_int(root_name,field_t,units_t,descr_t,T(i,:,:),opt)
-        wrf_wps_write_int(root_name,field_q,units_q,descr_q,Q(i,:,:),opt)
-        wrf_wps_write_int(root_name,field_u,units_u,descr_u,U(i,:,:),opt)
-        wrf_wps_write_int(root_name,field_v,units_v,descr_v,V(i,:,:),opt)
+        wrf_wps_write_int(root_name,field_t3,units_t3,descr_t3,T3(i,:,:),opt)
+        wrf_wps_write_int(root_name,field_q3,units_q3,descr_q3,Q3(i,:,:),opt)
+        wrf_wps_write_int(root_name,field_u3,units_u3,descr_u3,U3(i,:,:),opt)
+        wrf_wps_write_int(root_name,field_v3,units_v3,descr_v3,V3(i,:,:),opt)
+        ;wrf_wps_write_int(root_name,field_z3,units_z3,descr_z3,Z3(i,:,:),opt)
     end do
 
 end
