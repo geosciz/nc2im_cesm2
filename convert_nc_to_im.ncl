@@ -14,6 +14,7 @@ begin
     ua  = addfile(data_path+"ua_"+file_time+".nc","r")
     va  = addfile(data_path+"va_"+file_time+".nc","r")
 
+    ls = addfile(data_path+"ls_"+file_time+".nc","r")
     ps = addfile(data_path+"ps_"+file_time+".nc","r")
     ts = addfile(data_path+"ts_"+file_time+".nc","r")
     t2 = addfile(data_path+"t2_"+file_time+".nc","r")
@@ -34,6 +35,7 @@ begin
     U3 = ua->ua
     V3 = va->va
 
+    LS = ls->LANDMASK
     PS = ps->ps
     TS = ts->ts
     T2 = t2->ta
@@ -135,6 +137,7 @@ begin
     opt@date = HDATE
 
     opt@level = 200100.
+    wrf_wps_write_int(root_name,field_ls,units_ls,descr_ls,LS(:,:),opt)
     wrf_wps_write_int(root_name,field_ps,units_ps,descr_ps,PS(:,:),opt)
     wrf_wps_write_int(root_name,field_ts,units_ts,descr_ts,TS(:,:),opt)
     wrf_wps_write_int(root_name,field_t2,units_t2,descr_t2,T2(:,:),opt)
