@@ -6,14 +6,13 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/popRemap.ncl"
 
 begin
 
-    data_path  = "/home/zhangc/scenariomip_cmip6/im_data/"
+    data_path = "/home/zhangc/scenariomip_cmip6/im_data/"
     file_time = "2015-01-01_00:00:00"
 
     ta  = addfile(data_path+"ta_"+file_time+".nc","r")
     hus = addfile(data_path+"hus_"+file_time+".nc","r")
     ua  = addfile(data_path+"ua_"+file_time+".nc","r")
     va  = addfile(data_path+"va_"+file_time+".nc","r")
-    p   = addfile(data_path+"p_"+file_time+".nc","r")
 
     ps = addfile(data_path+"ps_"+file_time+".nc","r")
     ts = addfile(data_path+"ts_"+file_time+".nc","r")
@@ -23,7 +22,7 @@ begin
     v2 = addfile(data_path+"v2_"+file_time+".nc","r")
 
     command = "rm " + data_path + "*" + file_time + "*"
-    ;system(command)
+    system(command)
 
     time = ta->time
     lon  = ta->lon
@@ -34,14 +33,13 @@ begin
     Q3 = hus->hus
     U3 = ua->ua
     V3 = va->va
-    P3 = p->p
 
     PS = ps->ps
     TS = ts->ts
-    T2 = t2->t2
-    Q2 = q2->q2
-    U2 = u2->u2
-    V2 = v2->v2
+    T2 = t2->ta
+    Q2 = q2->hus
+    U2 = u2->ua
+    V2 = v2->va
 
     opt = True
     opt@map_source             = "CESM2"
