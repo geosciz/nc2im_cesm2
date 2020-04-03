@@ -14,8 +14,13 @@ begin
     ua  = addfile(data_path+"ua_"+file_time+".nc","r")
     va  = addfile(data_path+"va_"+file_time+".nc","r")
     p   = addfile(data_path+"p_"+file_time+".nc","r")
-    ps  = addfile(data_path+"ps_"+file_time+".nc","r")
-    ts  = addfile(data_path+"ts_"+file_time+".nc","r")
+
+    ps = addfile(data_path+"ps_"+file_time+".nc","r")
+    ts = addfile(data_path+"ts_"+file_time+".nc","r")
+    t2 = addfile(data_path+"t2_"+file_time+".nc","r")
+    q2 = addfile(data_path+"q2_"+file_time+".nc","r")
+    u2 = addfile(data_path+"u2_"+file_time+".nc","r")
+    v2 = addfile(data_path+"v2_"+file_time+".nc","r")
 
     command = "rm " + data_path + "*" + file_time + "*"
     ;system(command)
@@ -30,8 +35,13 @@ begin
     U3 = ua->ua
     V3 = va->va
     P3 = p->p
+
     PS = ps->ps
     TS = ts->ts
+    T2 = t2->t2
+    Q2 = q2->q2
+    U2 = u2->u2
+    V2 = v2->v2
 
     opt = True
     opt@map_source             = "CESM2"
@@ -129,10 +139,10 @@ begin
     opt@level = 200100.
     wrf_wps_write_int(root_name,field_ps,units_ps,descr_ps,PS(:,:),opt)
     wrf_wps_write_int(root_name,field_ts,units_ts,descr_ts,TS(:,:),opt)
-    ;wrf_wps_write_int(root_name,field_t2,units_t2,descr_t2,T2(:,:),opt)
-    ;wrf_wps_write_int(root_name,field_q2,units_q2,descr_q2,Q2(:,:),opt)
-    ;wrf_wps_write_int(root_name,field_u2,units_u2,descr_u2,U2(:,:),opt)
-    ;wrf_wps_write_int(root_name,field_v2,units_v2,descr_v2,V2(:,:),opt)
+    wrf_wps_write_int(root_name,field_t2,units_t2,descr_t2,T2(:,:),opt)
+    wrf_wps_write_int(root_name,field_q2,units_q2,descr_q2,Q2(:,:),opt)
+    wrf_wps_write_int(root_name,field_u2,units_u2,descr_u2,U2(:,:),opt)
+    wrf_wps_write_int(root_name,field_v2,units_v2,descr_v2,V2(:,:),opt)
 
     do i=0,dimsizes(lev)-1
         opt@level = -doubletofloat(lev(i))*100.
