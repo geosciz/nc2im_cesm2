@@ -21,9 +21,10 @@ begin
     q2 = addfile(data_path+"q2_"+file_time+".nc","r")
     u2 = addfile(data_path+"u2_"+file_time+".nc","r")
     v2 = addfile(data_path+"v2_"+file_time+".nc","r")
+    p2 = addfile(data_path+"p2_"+file_time+".nc","r")
 
     command = "rm " + data_path + "*" + file_time + "*"
-    system(command)
+    ;system(command)
 
     time = ta->time
     lon  = ta->lon
@@ -37,11 +38,13 @@ begin
 
     LS = ls->LANDMASK
     PS = ps->ps
+    print(ps)
     TS = ts->ts
     T2 = t2->ta
     Q2 = q2->hus
     U2 = u2->ua
     V2 = v2->va
+    P2 = p2->p2
 
     opt = True
     opt@map_source             = "CESM2"
@@ -86,10 +89,10 @@ begin
     units_ps = "Pa"
     descr_ps = "Surface Pressure"
 
-    ; mean sea-level pressure
-    filed_ = "PMSL"
-    units_ = "Pa"
-    descr_ = "Mean Sea-Level Pressure"
+    ; P2
+    field_p2 = "PMSL"
+    units_p2 = "Pa"
+    descr_p2 = "Mean Sea-Level Pressure"
 
     ; TS
     field_ts = "SKINTEMP"
@@ -144,6 +147,7 @@ begin
     wrf_wps_write_int(root_name,field_q2,units_q2,descr_q2,Q2(:,:),opt)
     wrf_wps_write_int(root_name,field_u2,units_u2,descr_u2,U2(:,:),opt)
     wrf_wps_write_int(root_name,field_v2,units_v2,descr_v2,V2(:,:),opt)
+    wrf_wps_write_int(root_name,field_p2,units_p2,descr_p2,P2(:,:),opt)
 
     do i=0,dimsizes(lev)-1
         opt@level = -doubletofloat(lev(i))*100.
