@@ -9,14 +9,17 @@ begin
     data_path = "/home/zhangc/scenariomip_cmip6/im_data/"
     file_time = "2015-01-01_00:00:00"
 
+    ls = addfile(data_path+"ls_"+file_time+".nc","r")
+    sh = addfile(data_path+"sh_"+file_time+".nc","r")
+
     ta  = addfile(data_path+"ta_"+file_time+".nc","r")
     hus = addfile(data_path+"hus_"+file_time+".nc","r")
     ua  = addfile(data_path+"ua_"+file_time+".nc","r")
     va  = addfile(data_path+"va_"+file_time+".nc","r")
+    ps  = addfile(data_path+"ps_"+file_time+".nc","r")
 
-    ls = addfile(data_path+"ls_"+file_time+".nc","r")
-    ps = addfile(data_path+"ps_"+file_time+".nc","r")
     ts = addfile(data_path+"ts_"+file_time+".nc","r")
+
     t2 = addfile(data_path+"t2_"+file_time+".nc","r")
     q2 = addfile(data_path+"q2_"+file_time+".nc","r")
     u2 = addfile(data_path+"u2_"+file_time+".nc","r")
@@ -31,15 +34,17 @@ begin
     lat  = ta->lat
     lev  = ta->lev
 
+    LS = ls->LANDMASK
+    SH = sh->PHIS
+
     T3 = ta->ta
     Q3 = hus->hus
     U3 = ua->ua
     V3 = va->va
-
-    LS = ls->LANDMASK
     PS = ps->ps
-    print(ps)
+
     TS = ts->ts
+
     T2 = t2->ta
     Q2 = q2->hus
     U2 = u2->ua
@@ -99,10 +104,10 @@ begin
     units_ts = "K"
     descr_ts = "Skin Temperature"
 
-    ; soil height
-    field_ = "SOILHGT"
-    units_ = "m"
-    descr_ = "Soil Height"
+    ; SH
+    field_sh = "SOILHGT"
+    units_sh = "m"
+    descr_sh = "Soil Height"
 
     ; T2
     field_t2 = "TT"
@@ -141,13 +146,18 @@ begin
 
     opt@level = 200100.
     wrf_wps_write_int(root_name,field_ls,units_ls,descr_ls,LS(:,:),opt)
-    wrf_wps_write_int(root_name,field_ps,units_ps,descr_ps,PS(:,:),opt)
+    wrf_wps_write_int(root_name,field_sh,units_sh,descr_sh,SH(:,:),opt)
     wrf_wps_write_int(root_name,field_ts,units_ts,descr_ts,TS(:,:),opt)
-    wrf_wps_write_int(root_name,field_t2,units_t2,descr_t2,T2(:,:),opt)
-    wrf_wps_write_int(root_name,field_q2,units_q2,descr_q2,Q2(:,:),opt)
+
+    opt@level = 201300.
+    wrf_wps_write_int(root_name,field_p2,units_p2,descr_p2,P2(:,:),opt)
+
+    opt@level = 200100.
+    wrf_wps_write_int(root_name,field_ps,units_ps,descr_ps,PS(:,:),opt)
     wrf_wps_write_int(root_name,field_u2,units_u2,descr_u2,U2(:,:),opt)
     wrf_wps_write_int(root_name,field_v2,units_v2,descr_v2,V2(:,:),opt)
-    wrf_wps_write_int(root_name,field_p2,units_p2,descr_p2,P2(:,:),opt)
+    wrf_wps_write_int(root_name,field_t2,units_t2,descr_t2,T2(:,:),opt)
+    wrf_wps_write_int(root_name,field_q2,units_q2,descr_q2,Q2(:,:),opt)
 
     do i=0,dimsizes(lev)-1
         opt@level = -doubletofloat(lev(i))*100.
