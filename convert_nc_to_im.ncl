@@ -26,6 +26,9 @@ begin
     v2 = addfile(data_path+"v2_"+file_time+".nc","r")
     p2 = addfile(data_path+"p2_"+file_time+".nc","r")
 
+    p3 = addfile(data_path+"p3_"+file_time+".nc","r")
+    tv = addfile(data_path+"tv_"+file_time+".nc","r")
+
     command = "rm " + data_path + "*" + file_time + "*"
     ;system(command)
 
@@ -50,6 +53,11 @@ begin
     U2 = u2->ua
     V2 = v2->va
     P2 = p2->p2
+
+    P3 = p3->p3
+    TV = tv->tv
+
+    Z3 = hydro(P3,TV,SH)
 
     opt = True
     opt@map_source             = "CESM2"
@@ -165,7 +173,7 @@ begin
         wrf_wps_write_int(root_name,field_q3,units_q3,descr_q3,Q3(i,:,:),opt)
         wrf_wps_write_int(root_name,field_u3,units_u3,descr_u3,U3(i,:,:),opt)
         wrf_wps_write_int(root_name,field_v3,units_v3,descr_v3,V3(i,:,:),opt)
-        ;wrf_wps_write_int(root_name,field_z3,units_z3,descr_z3,Z3(i,:,:),opt)
+        wrf_wps_write_int(root_name,field_z3,units_z3,descr_z3,Z3(:,:,i),opt)
     end do
 
 end
