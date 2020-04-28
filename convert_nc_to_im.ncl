@@ -29,6 +29,16 @@ begin
     p3 = addfile(data_path+"p3_"+file_time+".nc","r")
     tv = addfile(data_path+"tv_"+file_time+".nc","r")
 
+    sm1 = addfile(data_path+"swvl1_"+file_time+".nc","r")
+    sm2 = addfile(data_path+"swvl2_"+file_time+".nc","r")
+    sm3 = addfile(data_path+"swvl3_"+file_time+".nc","r")
+    sm4 = addfile(data_path+"swvl4_"+file_time+".nc","r")
+
+    st1 = addfile(data_path+"stl1_"+file_time+".nc","r")
+    st2 = addfile(data_path+"stl2_"+file_time+".nc","r")
+    st3 = addfile(data_path+"stl3_"+file_time+".nc","r")
+    st4 = addfile(data_path+"stl4_"+file_time+".nc","r")
+
     command = "rm " + data_path + "*" + file_time + "*"
     ;system(command)
 
@@ -58,6 +68,16 @@ begin
     TV = tv->tv
 
     Z3 = hydro(P3,TV,SH)
+
+    SM1 = sm1->swvl1
+    SM2 = sm2->swvl2
+    SM3 = sm3->swvl3
+    SM4 = sm4->swvl4
+
+    ST1 = st1->stl1
+    ST2 = st2->stl2
+    ST3 = st3->stl3
+    ST4 = st4->stl4
 
     opt = True
     opt@map_source             = "CESM2"
