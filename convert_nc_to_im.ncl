@@ -162,10 +162,39 @@ begin
     units_ls = "fraction"
     descr_ls = "Land-Sea Mask (0=Water, 1=Land)"
 
-    ; SM1
+    ; SM
     field_sm1 = "SM000007"
     units_sm1 = "m3 m-3"
     descr_sm1 = "Soil Moisture"
+
+    field_sm2 = "SM007028"
+    units_sm2 = "m3 m-3"
+    descr_sm2 = "Soil Moisture"
+
+    field_sm3 = "SM028100"
+    units_sm3 = "m3 m-3"
+    descr_sm3 = "Soil Moisture"
+
+    field_sm4 = "SM100289"
+    units_sm4 = "m3 m-3"
+    descr_sm4 = "Soil Moisture"
+
+    ; ST
+    field_st1 = "ST000007"
+    units_st1 = "K"
+    descr_st1 = "Soil Temperature"
+
+    field_st2 = "ST007028"
+    units_st2 = "K"
+    descr_st2 = "Soil Temperature"
+
+    field_st3 = "ST028100"
+    units_st3 = "K"
+    descr_st3 = "Soil Temperature"
+
+    field_st4 = "ST100289"
+    units_st4 = "K"
+    descr_st4 = "Soil Temperature"
 
     HDATE = cd_string(time, time_format1)
     file_pref = "CESM2_SCENARIOMIP_SSP245"
@@ -181,6 +210,14 @@ begin
     wrf_wps_write_int(root_name,field_ls,units_ls,descr_ls,LS(:,:),opt)
     wrf_wps_write_int(root_name,field_sh,units_sh,descr_sh,SH(:,:),opt)
     wrf_wps_write_int(root_name,field_ts,units_ts,descr_ts,TS(:,:),opt)
+    wrf_wps_write_int(root_name,field_st1,units_st1,descr_st1,ST1(:,:),opt)
+    wrf_wps_write_int(root_name,field_st2,units_st2,descr_st2,ST2(:,:),opt)
+    wrf_wps_write_int(root_name,field_st3,units_st3,descr_st3,ST3(:,:),opt)
+    wrf_wps_write_int(root_name,field_st4,units_st4,descr_st4,ST4(:,:),opt)
+    wrf_wps_write_int(root_name,field_sm1,units_sm1,descr_sm1,SM1(:,:),opt)
+    wrf_wps_write_int(root_name,field_sm2,units_sm2,descr_sm2,SM2(:,:),opt)
+    wrf_wps_write_int(root_name,field_sm3,units_sm3,descr_sm3,SM3(:,:),opt)
+    wrf_wps_write_int(root_name,field_sm4,units_sm4,descr_sm4,SM4(:,:),opt)
 
     opt@level = 201300.
     wrf_wps_write_int(root_name,field_p2,units_p2,descr_p2,P2(:,:),opt)
