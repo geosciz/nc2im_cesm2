@@ -162,6 +162,11 @@ begin
     units_ls = "fraction"
     descr_ls = "Land-Sea Mask (0=Water, 1=Land)"
 
+    ; SM1
+    field_sm1 = "SM000007"
+    units_sm1 = "m3 m-3"
+    descr_sm1 = "Soil Moisture"
+
     HDATE = cd_string(time, time_format1)
     file_pref = "CESM2_SCENARIOMIP_SSP245"
     OFILE = file_pref + ":" + cd_string(time, time_format2)
