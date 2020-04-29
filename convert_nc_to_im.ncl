@@ -40,7 +40,7 @@ begin
     st4 = addfile(data_path+"stl4_"+file_time+".nc","r")
 
     command = "rm " + data_path + "*" + file_time + "*"
-    ;system(command)
+    system(command)
 
     time = ta->time
     lon  = ta->lon
