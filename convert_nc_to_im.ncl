@@ -7,7 +7,6 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/popRemap.ncl"
 begin
 
     data_path = "/home/zhangc/scenariomip_cmip6/im_data/"
-    file_time = "2015-01-01_00:00:00"
 
     ls = addfile(data_path+"ls_"+file_time+".nc","r")
     sh = addfile(data_path+"sh_"+file_time+".nc","r")

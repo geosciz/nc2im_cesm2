@@ -3,7 +3,9 @@ from datetime import timedelta
 from numpy import datetime64, empty, full, repeat, stack
 from os import chdir, system
 from scipy.interpolate import griddata
+from warnings import simplefilter
 from xarray import DataArray, open_dataset
+simplefilter("ignore")
 
 nc_path = '/home/zhangc/scenariomip_cmip6/nc_data/'
 im_path = '/home/zhangc/scenariomip_cmip6/im_data/'
@@ -26,8 +28,6 @@ nc_mon = ['ts_Amon_CESM2_ssp245_r2i1p1f1_gn_201501-206412.nc']
 
 nc_era = ['soil_mon_ERA5_2015.nc']
 
-chdir(nc_path)
-
 start_year = 2015
 start_month = 1
 start_day = 1
@@ -43,13 +43,14 @@ date_list = []
 date = start_date
 while date <  end_date:
     date_list.append(date)
-    date += timedelta(days=1)
+    date += timedelta(hours=6)
 
 for date in date_list:
+    chdir(nc_path)
     # time
-    tnum = date.year, date.month, date.day
-    t6hr = DatetimeNoLeap(tnum[0], tnum[1], tnum[2])
-    tday = t6hr + timedelta(days=1)
+    tnum = date.year, date.month, date.day, date.hour
+    t6hr = DatetimeNoLeap(tnum[0], tnum[1], tnum[2], tnum[3])
+    tday =  DatetimeNoLeap(tnum[0], tnum[1], tnum[2]) + timedelta(days=1)
     tmon = DatetimeNoLeap(tnum[0], tnum[1], 15, 12)
     tera = datetime64('2015-'+str(tnum[1]).zfill(2)+'-01')
     file_time = str(t6hr).replace(' ', '_')
@@ -122,7 +123,6 @@ for date in date_list:
     y = da.lat.values.flatten()
     xy = stack((x, y), axis=-1)
     v = da.values.flatten()
-
     ds = open_dataset(nc_lev[0])
     lon1d = ds.lon.values
     lat1d = ds.lat.values
@@ -155,5 +155,8 @@ for date in date_list:
         file_name = vi + '_' + file_time + '.nc'
         da.to_netcdf(im_path+file_name)
     # run NCL
+    chdir(os_path)
     command = 'ncl convert_nc_to_im.ncl ' + "'file_time=" + '"' + file_time + '"' + "'"
     system(command)
+    # flag
+    print('The '+str(date)+' IM File Has Been Processed!')
