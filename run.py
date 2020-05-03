@@ -13,7 +13,7 @@ start_day = 1
 
 end_year = 2015
 end_month = 1
-end_day = 8
+end_day = 2
 
 nc_path = '/home/zhangc/scenariomip_cmip6/nc_data/'
 im_path = '/home/zhangc/scenariomip_cmip6/im_data/'
