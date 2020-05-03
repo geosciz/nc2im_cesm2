@@ -46,8 +46,8 @@ begin
     lat  = ta->lat
     lev  = ta->lev
 
-    LS = ls->LANDMASK
-    SH = sh->PHIS
+    LS = ls->ls
+    SH = sh->sh
 
     T3 = ta->ta
     Q3 = hus->hus
@@ -57,10 +57,10 @@ begin
 
     TS = ts->ts
 
-    T2 = t2->ta
-    Q2 = q2->hus
-    U2 = u2->ua
-    V2 = v2->va
+    T2 = t2->t2
+    Q2 = q2->q2
+    U2 = u2->u2
+    V2 = v2->v2
     P2 = p2->p2
 
     P3 = p3->p3

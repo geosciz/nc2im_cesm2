@@ -1,6 +1,6 @@
 from cftime import DatetimeNoLeap
 from datetime import timedelta
-from numpy import datetime64, empty, full, repeat, stack
+from numpy import datetime64, empty, float64, full, repeat, stack
 from os import chdir, system
 from scipy.interpolate import griddata
 from warnings import simplefilter
@@ -11,9 +11,9 @@ start_year = 2015
 start_month = 1
 start_day = 1
 
-end_year = 2016
+end_year = 2015
 end_month = 1
-end_day = 1
+end_day = 8
 
 nc_path = '/home/zhangc/scenariomip_cmip6/nc_data/'
 im_path = '/home/zhangc/scenariomip_cmip6/im_data/'
@@ -42,7 +42,7 @@ end_date = DatetimeNoLeap(end_year, end_month, end_day)
 
 dates = []
 date = start_date
-while date < end_date:
+while date <= end_date:
     dates.append(date)
     date += timedelta(hours=6)
 
@@ -63,11 +63,13 @@ for date in dates:
     tera = datetime64('2015-'+str(tnum[1]).zfill(2)+'-01')
     file_time = str(t6hr).replace(' ', '_')
     # land-sea mask
-    da = dss[9].LANDMASK*1.0
+    v = dss[9].LANDMASK.values*1.0
+    da = DataArray(name='ls', data=float64(v))
     file_name = 'ls_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # soil height
-    da = dss[10].PHIS/9.81
+    v = dss[10].PHIS.values/9.81
+    da = DataArray(name='sh', data=float64(v))
     file_name = 'sh_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # lev
@@ -75,13 +77,17 @@ for date in dates:
     for i in [0, 1, 2, 3]:
         ds = dss[i].sel(time=t6hr).sortby('lev')
         vi = ds.variable_id
-        da = ds[vi]
-        das.append(da)
+        das.append(ds[vi])
+        v = ds[vi]
+        v.attrs = {}
+        v.values = float64(v.values)
+        da = DataArray(name=vi, data=v)
         file_name = vi + '_' + file_time + '.nc'
         da.to_netcdf(im_path+file_name)
     # 6 hourly
     ds = dss[4].sel(time=t6hr)
-    da = ds['ps']
+    v = ds['ps'].values
+    da = DataArray(name='ps', data=float64(v))
     file_name = 'ps_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # virtual temperature
@@ -92,6 +98,8 @@ for date in dates:
     lat = das[0].lat.values
     lon = das[0].lon.values
     da = DataArray(name='tv', data=tv, coords=[lev, lat, lon], dims=['lev', 'lat', 'lon']).transpose('lat', 'lon', 'lev')
+    v = da.values
+    da = DataArray(name='tv', data=float64(v))
     file_name = 'tv_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # pressure
@@ -100,27 +108,29 @@ for date in dates:
     for i in range(len(lev)):
         p3[i] = full(shape[1:3], lev[i])
     da = DataArray(name='p3', data=p3, coords=[lev, lat, lon], dims=['lev', 'lat', 'lon']).transpose('lat', 'lon', 'lev')
+    v = da.values
+    da = DataArray(name='p3', data=float64(v))
     file_name = 'p3_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # surface variables
     vis = ['t2', 'q2', 'u2', 'v2']
     for i in range(4):
-        da = das[i].isel(lev=-1)
+        v = das[i].isel(lev=-1).values
+        da = DataArray(name=vis[i], data=float64(v))
         file_name = vis[i] + '_' + file_time + '.nc'
         da.to_netcdf(im_path+file_name)
     # skin temperature
     ds = dss[7].sel(time=tmon)
     vi = ds.variable_id
-    da = ds[vi]
+    v = ds[vi].values
+    da = DataArray(name=vi, data=float64(v))
     file_name = vi + '_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # sea level pressure
     da = das[0].isel(lev=-1)
     lev = da.lev.values*-100
-    lon = da.lon.values
-    lat = da.lat.values
-    values = full(da.shape, lev)
-    da = DataArray(name='p2', data=values, coords=[lat, lon], dims=['lat', 'lon'])
+    v = full(da.shape, lev)
+    da = DataArray(name='p2', data=float64(v))
     file_name = 'p2_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # sea surface temperature
@@ -137,14 +147,14 @@ for date in dates:
     lon2d = repeat(lon1d, ny).reshape(nx, ny).transpose()
     lat2d = repeat(lat1d, nx).reshape(ny, nx)
     vi = griddata(xy, v, (lon2d, lat2d), method='linear')
-    da = DataArray(data=vi, coords=[lat1d, lon1d], dims=['lat', 'lon'])
+    da = DataArray(name='sst', data=float64(vi))
     file_name = 'sst_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # sea ice concentration
     da = dss[6].siconc.sel(time=tday)
     v = da.values.flatten()
     vi = griddata(xy, v, (lon2d, lat2d), method='linear')
-    da = DataArray(data=vi, coords=[lat1d, lon1d], dims=['lat', 'lon'])
+    da = DataArray(name='sic', data=float64(vi))
     file_name = 'sic_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # soil moisture
@@ -152,12 +162,16 @@ for date in dates:
     vis = ['swvl1', 'swvl2', 'swvl3', 'swvl4']
     for vi in vis:
         da = ds[vi].interp(longitude=lon1d, latitude=lat1d)
+        v = da.values
+        da = DataArray(name=vi, data=float64(v))
         file_name = vi + '_' + file_time + '.nc'
         da.to_netcdf(im_path+file_name)
     # soil temperature
     vis = ['stl1', 'stl2', 'stl3', 'stl4']
     for vi in vis:
         da = ds[vi].interp(longitude=lon1d, latitude=lat1d)
+        v = da.values
+        da = DataArray(name=vi, data=float64(v))
         file_name = vi + '_' + file_time + '.nc'
         da.to_netcdf(im_path+file_name)
     # run NCL
