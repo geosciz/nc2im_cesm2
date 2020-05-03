@@ -47,7 +47,7 @@ while date <= end_date:
     date += timedelta(hours=6)
 
 for date in dates:
-    # time
+    # Time
     tnum = date.year, date.month, date.day, date.hour
     t6hr = DatetimeNoLeap(tnum[0], tnum[1], tnum[2], tnum[3])
     tday =  DatetimeNoLeap(tnum[0], tnum[1], tnum[2]) + timedelta(days=1)
@@ -62,17 +62,17 @@ for date in dates:
     tmon = DatetimeNoLeap(tnum[0], tnum[1], mid_day, mid_hour)
     tera = datetime64('2015-'+str(tnum[1]).zfill(2)+'-01')
     file_time = str(t6hr).replace(' ', '_')
-    # land-sea mask
+    # Land-Sea Mask
     v = dss[9].LANDMASK.values*1.0
     da = DataArray(name='ls', data=float64(v))
     file_name = 'ls_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # soil height
+    # Soil Height
     v = dss[10].PHIS.values/9.81
     da = DataArray(name='sh', data=float64(v))
     file_name = 'sh_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # lev
+    # 3D Temperature, Humidity, Winds
     das = []
     for i in [0, 1, 2, 3]:
         ds = dss[i].sel(time=t6hr).sortby('lev')
@@ -84,13 +84,13 @@ for date in dates:
         da = DataArray(name=vi, data=v)
         file_name = vi + '_' + file_time + '.nc'
         da.to_netcdf(im_path+file_name)
-    # 6 hourly
+    # Surface Pressure
     ds = dss[4].sel(time=t6hr)
     v = ds['ps'].values
     da = DataArray(name='ps', data=float64(v))
     file_name = 'ps_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # virtual temperature
+    # Virtual Temperature
     t = das[0].sortby('lev').values
     q = das[1].sortby('lev').values
     tv = t*(1.+q*0.61)
@@ -102,7 +102,7 @@ for date in dates:
     da = DataArray(name='tv', data=float64(v))
     file_name = 'tv_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # pressure
+    # 3D Pressure
     shape = das[0].shape
     p3 = empty(shape)
     for i in range(len(lev)):
@@ -112,28 +112,26 @@ for date in dates:
     da = DataArray(name='p3', data=float64(v))
     file_name = 'p3_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # surface variables
+    # 2M Temperature, Humidity, Winds
     vis = ['t2', 'q2', 'u2', 'v2']
     for i in range(4):
         v = das[i].isel(lev=-1).values
         da = DataArray(name=vis[i], data=float64(v))
         file_name = vis[i] + '_' + file_time + '.nc'
         da.to_netcdf(im_path+file_name)
-    # skin temperature
-    ds = dss[7].sel(time=tmon)
-    vi = ds.variable_id
-    v = ds[vi].values
+    # Skin Temperature
+    v = dss[7].sel(time=tmon)['ts'].values
     da = DataArray(name=vi, data=float64(v))
     file_name = vi + '_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # sea level pressure
+    # Sea Level Pressure
     da = das[0].isel(lev=-1)
     lev = da.lev.values*-100
     v = full(da.shape, lev)
     da = DataArray(name='p2', data=float64(v))
     file_name = 'p2_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # sea surface temperature
+    # Sea Surface Temperature
     da = dss[5].tos.sel(time=tday)
     x = da.lon.values.flatten()
     y = da.lat.values.flatten()
@@ -150,27 +148,18 @@ for date in dates:
     da = DataArray(name='sst', data=float64(vi))
     file_name = 'sst_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # sea ice concentration
+    # Sea Ice Concentration
     da = dss[6].siconc.sel(time=tday)
     v = da.values.flatten()
     vi = griddata(xy, v, (lon2d, lat2d), method='linear')
     da = DataArray(name='sic', data=float64(vi))
     file_name = 'sic_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # soil moisture
+    # Soil Moisture, Temperature
     ds = dss[8].sel(time=tera)
-    vis = ['swvl1', 'swvl2', 'swvl3', 'swvl4']
+    vis = ['swvl1', 'swvl2', 'swvl3', 'swvl4', 'stl1', 'stl2', 'stl3', 'stl4']
     for vi in vis:
-        da = ds[vi].interp(longitude=lon1d, latitude=lat1d)
-        v = da.values
-        da = DataArray(name=vi, data=float64(v))
-        file_name = vi + '_' + file_time + '.nc'
-        da.to_netcdf(im_path+file_name)
-    # soil temperature
-    vis = ['stl1', 'stl2', 'stl3', 'stl4']
-    for vi in vis:
-        da = ds[vi].interp(longitude=lon1d, latitude=lat1d)
-        v = da.values
+        v = ds[vi].interp(longitude=lon1d, latitude=lat1d).values
         da = DataArray(name=vi, data=float64(v))
         file_name = vi + '_' + file_time + '.nc'
         da.to_netcdf(im_path+file_name)
