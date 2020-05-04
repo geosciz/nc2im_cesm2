@@ -11,9 +11,9 @@ start_year = 2015
 start_month = 1
 start_day = 1
 
-end_year = 2015
+end_year = 2016
 end_month = 1
-end_day = 2
+end_day = 1
 
 nc_path = '/home/zhangc/cesm2_cmip6/nc_data/'
 im_path = '/home/zhangc/cesm2_cmip6/im_data/'
