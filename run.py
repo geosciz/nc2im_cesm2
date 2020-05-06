@@ -68,7 +68,7 @@ for date in dates:
     file_name = 'ls_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # Soil Height
-    v = dss[10].PHIS.values/9.81
+    v = dss[10].PHIS.values/9.80655
     da = DataArray(name='sh', data=float32(v))
     file_name = 'sh_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
