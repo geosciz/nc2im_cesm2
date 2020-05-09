@@ -1,6 +1,6 @@
 from cftime import DatetimeNoLeap
 from datetime import timedelta
-from numpy import datetime64, empty, float32, full, repeat, stack
+from numpy import array, datetime64, empty, float32, full, repeat, stack
 from os import chdir, system
 from scipy.interpolate import griddata
 from warnings import simplefilter
@@ -73,10 +73,15 @@ for date in dates:
     file_name = 'sh_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # 3D Temperature, Humidity, Winds
+    nlev = array([1000, 975, 950, 925, 900, 850, 800, 750, 700,
+                   650, 600, 550, 500, 450, 400, 350, 300, 250,
+                   200, 150, 100,  70,  50,  30,  20,  10])
+    nlev = -float32(nlev)
     for i in [0, 1, 2, 3]:
         ds = dss[i].sel(time=t6hr).sortby('lev')
+        dsi = ds.interp(lev=nlev, kwargs={'fill_value': 'extrapolate'})
         vi = ds.variable_id
-        v = ds[vi]
+        v = dsi[vi]
         v.attrs = {}
         v.values = float32(v.values)
         da = DataArray(name=vi, data=v)
