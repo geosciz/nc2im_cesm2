@@ -8,31 +8,33 @@ begin
 
     data_path = "/home/zhangc/cesm2_cmip6/im_data/"
 
+    time = addfile(data_path+"time_"+file_time+".nc","r")
+    lev = addfile(data_path+"lev_"+file_time+".nc","r")
+    lon = addfile(data_path+"lon_"+file_time+".nc","r")
+    lat = addfile(data_path+"lat_"+file_time+".nc","r")
+
+    p0 = addfile(data_path+"p0_"+file_time+".nc","r")
+    ps = addfile(data_path+"ps_"+file_time+".nc","r")
+    a = addfile(data_path+"a_"+file_time+".nc","r")
+    b = addfile(data_path+"b_"+file_time+".nc","r")
+    a_bnds = addfile(data_path+"a_bnds_"+file_time+".nc","r")
+    b_bnds = addfile(data_path+"b_bnds_"+file_time+".nc","r")
+
     ls = addfile(data_path+"ls_"+file_time+".nc","r")
+    phis = addfile(data_path+"phis_"+file_time+".nc","r")
     sh = addfile(data_path+"sh_"+file_time+".nc","r")
 
-    ta  = addfile(data_path+"ta_"+file_time+".nc","r")
+    ta = addfile(data_path+"ta_"+file_time+".nc","r")
     hus = addfile(data_path+"hus_"+file_time+".nc","r")
-    ua  = addfile(data_path+"ua_"+file_time+".nc","r")
-    va  = addfile(data_path+"va_"+file_time+".nc","r")
-    ps  = addfile(data_path+"ps_"+file_time+".nc","r")
-
-    ts = addfile(data_path+"ts_"+file_time+".nc","r")
-
-    t2 = addfile(data_path+"t2_"+file_time+".nc","r")
-    q2 = addfile(data_path+"q2_"+file_time+".nc","r")
-    u2 = addfile(data_path+"u2_"+file_time+".nc","r")
-    v2 = addfile(data_path+"v2_"+file_time+".nc","r")
-    p2 = addfile(data_path+"p2_"+file_time+".nc","r")
-
-    p3 = addfile(data_path+"p3_"+file_time+".nc","r")
+    ua = addfile(data_path+"ua_"+file_time+".nc","r")
+    va = addfile(data_path+"va_"+file_time+".nc","r")
     tv = addfile(data_path+"tv_"+file_time+".nc","r")
+    ts = addfile(data_path+"ts_"+file_time+".nc","r")
 
     sm1 = addfile(data_path+"swvl1_"+file_time+".nc","r")
     sm2 = addfile(data_path+"swvl2_"+file_time+".nc","r")
     sm3 = addfile(data_path+"swvl3_"+file_time+".nc","r")
     sm4 = addfile(data_path+"swvl4_"+file_time+".nc","r")
-
     st1 = addfile(data_path+"stl1_"+file_time+".nc","r")
     st2 = addfile(data_path+"stl2_"+file_time+".nc","r")
     st3 = addfile(data_path+"stl3_"+file_time+".nc","r")
@@ -41,56 +43,37 @@ begin
     command = "rm " + data_path + "*" + file_time + "*"
     system(command)
 
-    time = ta->time
-    lon  = ta->lon
-    lat  = ta->lat
-    lev  = ta->lev
+    TIME =
+    LEV =
+    LON =
+    LAT =
 
+    P0 =
+    PS =
+    AM =
+    BM =
+    AI =
+    BI =
 
     LS = ls->ls
+    PHIS =
     SH = sh->sh
 
-    T3 = ta->ta
-    Q3 = hus->hus
-    U3 = ua->ua
-    V3 = va->va
-    PS = ps->ps
-
-    TS = ts->ts
-
-    T2 = t2->t2
-    Q2 = q2->q2
-    U2 = u2->u2
-    V2 = v2->v2
-    P2 = p2->p2
-
-    P3 = p3->p3
-    TV = tv->tv
-
-    Z3 = hydro(P3,TV,SH)
+    TH = ta->ta
+    QH = hus->hus
+    UH = ua->ua
+    VH = va->va
+    TV
+    TS
 
     SM1 = sm1->swvl1
     SM2 = sm2->swvl2
     SM3 = sm3->swvl3
     SM4 = sm4->swvl4
-
     ST1 = st1->stl1
     ST2 = st2->stl2
     ST3 = st3->stl3
     ST4 = st4->stl4
-
-    opt = True
-    opt@map_source             = "CESM2"
-    opt@projection             = 0
-    opt@startloc               = "SWCORNER"
-    opt@startlon               = doubletofloat(lon(0))
-    opt@startlat               = doubletofloat(lat(0))
-    opt@deltalon               = doubletofloat(lon(1)-lon(0))
-    opt@deltalat               = doubletofloat(lat(1)-lat(0))
-    opt@is_wind_earth_relative = False
-
-    time_format1 = "%Y-%N-%D_%H:00:0000000"
-    time_format2 = "%Y-%N-%D_%H"
 
     ; T3
     field_t3 = "TT"
@@ -195,6 +178,19 @@ begin
     field_st4 = "ST100289"
     units_st4 = "K"
     descr_st4 = "Soil Temperature"
+
+    opt = True
+    opt@map_source             = "CESM2"
+    opt@projection             = 0
+    opt@startloc               = "SWCORNER"
+    opt@startlon               = doubletofloat(lon(0))
+    opt@startlat               = doubletofloat(lat(0))
+    opt@deltalon               = doubletofloat(lon(1)-lon(0))
+    opt@deltalat               = doubletofloat(lat(1)-lat(0))
+    opt@is_wind_earth_relative = False
+
+    time_format1 = "%Y-%N-%D_%H:00:0000000"
+    time_format2 = "%Y-%N-%D_%H"
 
     HDATE = cd_string(time, time_format1)
     file_pref = "CESM2_SCENARIOMIP_SSP245"
