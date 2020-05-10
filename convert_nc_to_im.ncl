@@ -43,10 +43,10 @@ begin
     command = "rm " + data_path + "*" + file_time + "*"
     system(command)
 
-    TIME =
-    LEV =
-    LON =
-    LAT =
+    TIME = time->time
+    LEV = lev->lev
+    LON = lon->lon
+    LAT = lat->lat
 
     P0 =
     PS =
