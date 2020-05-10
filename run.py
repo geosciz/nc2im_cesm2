@@ -1,6 +1,6 @@
 from cftime import DatetimeNoLeap
 from datetime import timedelta
-from numpy import datetime64, empty, float32, full, repeat, stack
+from numpy import append, datetime64, empty, float32, full, repeat, stack
 from os import chdir, system
 from scipy.interpolate import griddata
 from warnings import simplefilter
@@ -46,7 +46,7 @@ while date <= end_date:
     date += timedelta(hours=6)
 
 for date in dates:
-    # Time
+    # time
     tnum = date.year, date.month, date.day, date.hour
     t6hr = DatetimeNoLeap(tnum[0], tnum[1], tnum[2], tnum[3])
     tday =  DatetimeNoLeap(tnum[0], tnum[1], tnum[2]) + timedelta(days=1)
@@ -61,25 +61,24 @@ for date in dates:
     tmon = DatetimeNoLeap(tnum[0], tnum[1], mid_day, mid_hour)
     tera = datetime64('2015-'+str(tnum[1]).zfill(2)+'-01')
     file_time = str(t6hr).replace(' ', '_')
-    # Land-Sea Mask
+    # land-sea mask
     v = dss[8].LANDMASK.values
     da = DataArray(name='ls', data=float32(v))
     file_name = 'ls_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # Surface Geopotential
+    # surface geopotential
     v = dss[9].PHIS.values
     da = DataArray(name='phis', data=float32(v))
     file_name = 'phis_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # Soil Height
-    v = dss[10].PHIS.values/9.80655
+    # soil height
+    v = dss[9].PHIS.values/9.80655
     da = DataArray(name='sh', data=float32(v))
     file_name = 'sh_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # Basic Info
+    # basic info
     ds = dss[0].sel(time=t6hr).sortby('lev')
-    v = ds.time.values
-    da = DataArray(name='time', data=v)
+    da = ds.ta
     file_name = 'time_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     ss = ['lev', 'lon', 'lat', 'p0', 'ps', 'a', 'b']
@@ -90,16 +89,18 @@ for date in dates:
         da.to_netcdf(im_path+file_name)
     ss = ['a_bnds', 'b_bnds']
     for s in ss:
-        v = ds[s].values[:,1]
+        v0 = ds[s].values[:,0]
+        v1 = ds[s].values[:,1]
+        v = append(v1, v0[-1])
         da = DataArray(name=s, data=float32(v))
         file_name = s + '_' + file_time + '.nc'
         da.to_netcdf(im_path+file_name)
-    # 3D Temperature
+    # 3d temperature
     v = ds.ta.values
     da = DataArray(name='ta', data=float32(v))
     file_name = 'ta_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # 3D Humidity, Winds
+    # 3d humidity, winds
     for i in range(1,4):
         ds = dss[i].sel(time=t6hr).sortby('lev')
         vi = ds.variable_id
@@ -107,19 +108,19 @@ for date in dates:
         da = DataArray(name=vi, data=float32(v))
         file_name = vi + '_' + file_time + '.nc'
         da.to_netcdf(im_path+file_name)
-    # 3D Virtual Temperature
+    # 3d virtual temperature
     t = dss[0].ta.sel(time=t6hr).sortby('lev').values
     q = dss[1].hus.sel(time=t6hr).sortby('lev').values
     tv = t*(1.+q*0.61)
     da = DataArray(name='tv', data=float32(tv))
     file_name = 'tv_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # Skin Temperature
-    v = dss[7].ts.sel(time=tmon).values
+    # skin temperature
+    v = dss[6].ts.sel(time=tmon).values
     da = DataArray(name='ts', data=float32(v))
     file_name = 'ts_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # Sea Surface Temperature
+    # sea surface temperature
     ds = dss[4].tos.sel(time=tday)
     x = ds.lon.values.flatten()
     y = ds.lat.values.flatten()
@@ -135,14 +136,14 @@ for date in dates:
     da = DataArray(name='sst', data=float32(vi))
     file_name = 'sst_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # Sea Ice Concentration
+    # sea ice concentration
     da = dss[5].siconc.sel(time=tday)
     v = da.values.flatten()
     vi = griddata(xy, v, (lon2d, lat2d), method='linear')
     da = DataArray(name='sic', data=float32(vi))
     file_name = 'sic_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # Soil Moisture, Temperature
+    # soil moisture, temperature
     ds = dss[7].sel(time=tera)
     ss = ['swvl1', 'swvl2', 'swvl3', 'swvl4', 'stl1', 'stl2', 'stl3', 'stl4']
     for s in ss:
@@ -150,9 +151,9 @@ for date in dates:
         da = DataArray(name=s, data=float32(v))
         file_name = s + '_' + file_time + '.nc'
         da.to_netcdf(im_path+file_name)
-    # Run NCL
+    # run ncl
     chdir(os_path)
     command = 'ncl convert_nc_to_im.ncl ' + "'file_time=" + '"' + file_time + '"' + "'"
     system(command)
-    # Flag
+    # flag
     print('The '+str(date)+' IM File Has Been Processed!')
