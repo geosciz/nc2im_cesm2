@@ -79,8 +79,21 @@ begin
     R = relhum(T,Q,P)
     MX = 100.
     R = where(R.gt.MX, MX, R)
-    Z = cz2ccm(PS,PHIS,TV(::-1,:,:),P0,AM,BM,AI,BI)
-    Z = Z(::-1,:,:)
+    ;Z = cz2ccm(PS,PHIS,TV(::-1,:,:),P0,AM,BM,AI,BI)
+    ;Z = Z(::-1,:,:)
+    P!0 = "lev"
+    P!1 = "lat"
+    P!2 = "lon"
+    PR = P(lat|:,lon|:,lev|:)
+    TV!0 = "lev"
+    TV!1 = "lat"
+    TV!2 = "lon"
+    TVR = TV(lat|:,lon|:,lev|:)
+    ZR = hydro(PR,TVR,SH)
+    ZR!0 = "lat"
+    ZR!1 = "lon"
+    ZR!2 = "lev"
+    Z = ZR(lev|:,lat|:,lon|:)
 
     TL0 = T(0,:,:)
     TL1 = T(1,:,:)
@@ -88,11 +101,13 @@ begin
     PL1 = P(1,:,:)
     T2 = TL1-(TL1-TL0)*((log(PS)-log(PL1))/(log(PL0)-log(PL1)))
     R2 = R(0,:,:)
-    UL0 = U(0,:,:)
-    VL0 = V(0,:,:)
-    ZL0 = Z(0,:,:)
-    UX = UL0*((10./(ZL0-SH))^0.145)
-    VX = VL0*((10./(ZL0-SH))^0.145)
+    ;UL0 = U(0,:,:)
+    ;VL0 = V(0,:,:)
+    ;ZL0 = Z(0,:,:)
+    ;UX = UL0*((10./(ZL0-SH))^0.145)
+    ;VX = VL0*((10./(ZL0-SH))^0.145)
+    UX = U(0,:,:)
+    VX = V(0,:,:)
 
     PL0 = P(0,:,:)
     SLP = pslec(TL0,PHIS,PS,PL0)
