@@ -7,7 +7,7 @@ from warnings import simplefilter
 from xarray import DataArray, open_dataset
 simplefilter("ignore")
 
-start_year = 2015
+start_year = 2010
 start_month = 1
 start_day = 1
 
@@ -19,16 +19,18 @@ nc_path = '/home/zhangc/cesm2_cmip6/nc_data/'
 im_path = '/home/zhangc/cesm2_cmip6/im_data/'
 os_path = '/home/zhangc/repositories/nc2im_cesm2/'
 
-ncs = ['ta_6hrLev_CESM2_ssp245_r2i1p1f1_gn_201501010000-202412311800.nc',     # 0
-       'hus_6hrLev_CESM2_ssp245_r2i1p1f1_gn_201501010000-202412311800.nc',    # 1
-       'ua_6hrLev_CESM2_ssp245_r2i1p1f1_gn_201501010000-202412311800.nc',     # 2
-       'va_6hrLev_CESM2_ssp245_r2i1p1f1_gn_201501010000-202412311800.nc',     # 3
-       'tos_Oday_CESM2_ssp245_r2i1p1f1_gn_20150102-20650101.nc',              # 4
-       'siconc_SIday_CESM2_ssp245_r2i1p1f1_gn_20150102-20650101.nc',          # 5
-       'ts_Amon_CESM2_ssp245_r2i1p1f1_gn_201501-206412.nc',                   # 6
-       'soil_mon_ERA5_2015.nc',                                               # 7
-       'fracdata_0.9x1.25_gx1v6_c090317.nc',                                  # 8
-       'USGS-gtopo30_0.9x1.25_remap_c051027.nc']                              # 9
+
+
+ncs = ['ta_6hrLev_CESM2_historical_r11i1p1f1_gn_201001010000-201501010000.nc',  # 0
+       'hus_6hrLev_CESM2_historical_r11i1p1f1_gn_201001010000-201501010000.nc', # 1
+       'ua_6hrLev_CESM2_historical_r11i1p1f1_gn_201001010000-201501010000.nc',  # 2
+       'va_6hrLev_CESM2_historical_r11i1p1f1_gn_201001010000-201501010000.nc',  # 3
+       'tos_Oday_CESM2_historical_r11i1p1f1_gn_20000102-20150101.nc',           # 4
+       'siconc_SIday_CESM2_historical_r11i1p1f1_gn_20000102-20150101.nc',       # 5
+       'ts_Amon_CESM2_historical_r11i1p1f1_gn_200001-201412.nc',                # 6
+       'soil_mon_ERA5_2015.nc',                                                 # 7
+       'fracdata_0.9x1.25_gx1v6_c090317.nc',                                    # 8
+       'USGS-gtopo30_0.9x1.25_remap_c051027.nc']                                # 9
 
 chdir(nc_path)
 
