@@ -231,7 +231,7 @@ begin
     time_long = "%Y-%N-%D_%H:00:0000000"
     time_short = "%Y-%N-%D_%H"
     HDATE = cd_string(TIME, time_long)
-    file_pref = "CESM2_CMIP6_SCENARIOMIP_SSP245"
+    file_pref = "CESM2_CMIP6_HISTORICAL"
     OFILE = file_pref + ":" + cd_string(TIME, time_short)
     root_name = data_path + file_pref
 
