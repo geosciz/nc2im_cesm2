@@ -9,7 +9,6 @@ begin
     lon = addfile(data_path+"lon_"+file_time+".nc","r")
     lat = addfile(data_path+"lat_"+file_time+".nc","r")
 
-    p0 = addfile(data_path+"p0_"+file_time+".nc","r")
     ps = addfile(data_path+"ps_"+file_time+".nc","r")
     a = addfile(data_path+"a_"+file_time+".nc","r")
     b = addfile(data_path+"b_"+file_time+".nc","r")
@@ -46,7 +45,6 @@ begin
     LON = lon->lon
     LAT = lat->lat
 
-    P0 = p0->p0
     PS = ps->ps
     AM = a->a
     BM = b->b
@@ -75,25 +73,13 @@ begin
     ST3 = st3->stl3
     ST4 = st4->stl4
 
-    P = pres_hybrid_ccm(PS,P0,AM,BM)
+    P0PA = 100000.
+    P = pres_hybrid_ccm(PS,P0PA,AM,BM)
     R = relhum(T,Q,P)
     MX = 100.
     R = where(R.gt.MX, MX, R)
-    Z = cz2ccm(PS,PHIS,TV(::-1,:,:),P0,AM,BM,AI,BI)
+    Z = cz2ccm(PS,PHIS,TV(::-1,:,:),P0PA,AM,BM,AI,BI)
     Z = Z(::-1,:,:)
-    ;P!0 = "lev"
-    ;P!1 = "lat"
-    ;P!2 = "lon"
-    ;PR = P(lat|:,lon|:,lev|:)
-    ;TV!0 = "lev"
-    ;TV!1 = "lat"
-    ;TV!2 = "lon"
-    ;TVR = TV(lat|:,lon|:,lev|:)
-    ;ZR = hydro(PR,TVR,SH)
-    ;ZR!0 = "lat"
-    ;ZR!1 = "lon"
-    ;ZR!2 = "lev"
-    ;Z = ZR(lev|:,lat|:,lon|:)
 
     TL0 = T(0,:,:)
     TL1 = T(1,:,:)
@@ -106,8 +92,6 @@ begin
     ZL0 = Z(0,:,:)
     UX = UL0*((10./(ZL0-SH))^0.145)
     VX = VL0*((10./(ZL0-SH))^0.145)
-    ;UX = U(0,:,:)
-    ;VX = V(0,:,:)
 
     PL0 = P(0,:,:)
     SLP = pslec(TL0,PHIS,PS,PL0)
@@ -115,12 +99,15 @@ begin
     PLEV = (/ 1000., 975., 950., 925., 900., 850., 800., 750., 700., \
                650., 600., 550., 500., 450., 400., 350., 300., 250., \
                200., 150., 100.,  70.,  50.,  30.,  20.,  10. /)
+    INTYP = 1
     P0MB = 1000.
-    TP = vinth2p_ecmwf(T(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,2,P0MB,1,True,1,TL0,PHIS)
-    RP = vinth2p_ecmwf(R(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,2,P0MB,1,True,0,TL0,PHIS)
-    UP = vinth2p_ecmwf(U(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,2,P0MB,1,True,0,TL0,PHIS)
-    VP = vinth2p_ecmwf(V(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,2,P0MB,1,True,0,TL0,PHIS)
-    ZP = vinth2p_ecmwf(Z(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,2,P0MB,1,True,-1,TL0,PHIS)
+    II = 1
+    KXTRP = True
+    TP = vinth2p_ecmwf(T(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,INTYP,P0MB,II,KXTRP,1,TL0,PHIS)
+    RP = vinth2p_ecmwf(R(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,INTYP,P0MB,II,KXTRP,0,TL0,PHIS)
+    UP = vinth2p_ecmwf(U(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,INTYP,P0MB,II,KXTRP,0,TL0,PHIS)
+    VP = vinth2p_ecmwf(V(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,INTYP,P0MB,II,KXTRP,0,TL0,PHIS)
+    ZP = vinth2p_ecmwf(Z(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,INTYP,P0MB,II,KXTRP,-1,TL0,PHIS)
 
     field_t3 = "TT"
     units_t3 = "K"

@@ -77,11 +77,11 @@ for date in dates:
     file_name = 'sh_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # basic info
-    ds = dss[0].sel(time=t6hr).sortby('lev')
+    ds = dss[0].sel(time=t6hr)
     da = ds.ta
     file_name = 'time_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    ss = ['lev', 'lon', 'lat', 'p0', 'ps', 'a', 'b']
+    ss = ['lev', 'lon', 'lat', 'ps', 'a', 'b']
     for s in ss:
         v = ds[s].values
         da = DataArray(name=s, data=float32(v))
@@ -102,15 +102,15 @@ for date in dates:
     da.to_netcdf(im_path+file_name)
     # 3d humidity, winds
     for i in range(1,4):
-        ds = dss[i].sel(time=t6hr).sortby('lev')
+        ds = dss[i].sel(time=t6hr)
         vi = ds.variable_id
         v = ds[vi].values
         da = DataArray(name=vi, data=float32(v))
         file_name = vi + '_' + file_time + '.nc'
         da.to_netcdf(im_path+file_name)
     # 3d virtual temperature
-    t = dss[0].ta.sel(time=t6hr).sortby('lev').values
-    q = dss[1].hus.sel(time=t6hr).sortby('lev').values
+    t = dss[0].ta.sel(time=t6hr).values
+    q = dss[1].hus.sel(time=t6hr).values
     tv = t*(1.+q*0.61)
     da = DataArray(name='tv', data=float32(tv))
     file_name = 'tv_' + file_time + '.nc'
