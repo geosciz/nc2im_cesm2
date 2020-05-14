@@ -19,8 +19,6 @@ nc_path = '/home/zhangc/cesm2_cmip6/nc_data/'
 im_path = '/home/zhangc/cesm2_cmip6/im_data/'
 os_path = '/home/zhangc/repositories/nc2im_cesm2/'
 
-
-
 ncs = ['ta_6hrLev_CESM2_historical_r11i1p1f1_gn_201001010000-201501010000.nc',  # 0
        'hus_6hrLev_CESM2_historical_r11i1p1f1_gn_201001010000-201501010000.nc', # 1
        'ua_6hrLev_CESM2_historical_r11i1p1f1_gn_201001010000-201501010000.nc',  # 2
