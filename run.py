@@ -7,11 +7,11 @@ from warnings import simplefilter
 from xarray import DataArray, open_dataset
 simplefilter("ignore")
 
-start_year = 2010
+start_year = 2001
 start_month = 1
 start_day = 1
 
-end_year = 2010
+end_year = 2001
 end_month = 1
 end_day = 2
 
@@ -19,16 +19,17 @@ nc_path = '/home/zhangc/cesm2_cmip6/nc_data/'
 im_path = '/home/zhangc/cesm2_cmip6/im_data/'
 os_path = '/home/zhangc/repositories/nc2im_cesm2/'
 
-ncs = ['ta_6hrLev_CESM2_historical_r11i1p1f1_gn_201001010000-201501010000.nc',  # 0
-       'hus_6hrLev_CESM2_historical_r11i1p1f1_gn_201001010000-201501010000.nc', # 1
-       'ua_6hrLev_CESM2_historical_r11i1p1f1_gn_201001010000-201501010000.nc',  # 2
-       'va_6hrLev_CESM2_historical_r11i1p1f1_gn_201001010000-201501010000.nc',  # 3
-       'tos_Oday_CESM2_historical_r11i1p1f1_gn_20000102-20150101.nc',           # 4
-       'siconc_SIday_CESM2_historical_r11i1p1f1_gn_20000102-20150101.nc',       # 5
-       'ts_Amon_CESM2_historical_r11i1p1f1_gn_200001-201412.nc',                # 6
-       'soil_mon_ERA5_2015.nc',                                                 # 7
-       'fracdata_0.9x1.25_gx1v6_c090317.nc',                                    # 8
-       'USGS-gtopo30_0.9x1.25_remap_c051027.nc']                                # 9
+ncs = ['ta_6hrLev_CESM2_historical_r11i1p1f1_gn_200001010000-200912311800.nc',  #  0
+       'hus_6hrLev_CESM2_historical_r11i1p1f1_gn_200001010000-200912311800.nc', #  1
+       'ua_6hrLev_CESM2_historical_r11i1p1f1_gn_200001010000-200912311800.nc',  #  2
+       'va_6hrLev_CESM2_historical_r11i1p1f1_gn_200001010000-200912311800.nc',  #  3
+       'tos_Oday_CESM2_historical_r11i1p1f1_gn_20000102-20150101.nc',           #  4
+       'siconc_SIday_CESM2_historical_r11i1p1f1_gn_20000102-20150101.nc',       #  5
+       'snw_day_CESM2_historical_r11i1p1f1_gn_20000101-20150101.nc',            #  6
+       'ts_Amon_CESM2_historical_r11i1p1f1_gn_200001-201412.nc',                #  7
+       'soil_mon_ERA5_2015.nc',                                                 #  8
+       'fracdata_0.9x1.25_gx1v6_c090317.nc',                                    #  9
+       'USGS-gtopo30_0.9x1.25_remap_c051027.nc']                                # 10
 
 chdir(nc_path)
 
@@ -62,17 +63,17 @@ for date in dates:
     tera = datetime64('2015-'+str(tnum[1]).zfill(2)+'-01')
     file_time = str(t6hr).replace(' ', '_')
     # land-sea mask
-    v = dss[8].LANDMASK.values
+    v = dss[9].LANDMASK.values
     da = DataArray(name='ls', data=float32(v))
     file_name = 'ls_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # surface geopotential
-    v = dss[9].PHIS.values
+    v = dss[10].PHIS.values
     da = DataArray(name='phis', data=float32(v))
     file_name = 'phis_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # soil height
-    v = dss[9].PHIS.values/9.80655
+    v = dss[10].PHIS.values/9.80655
     da = DataArray(name='sh', data=float32(v))
     file_name = 'sh_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
@@ -81,20 +82,33 @@ for date in dates:
     da = ds.ta
     file_name = 'time_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    ss = ['lev', 'lon', 'lat', 'ps', 'a', 'b']
+    ss = ['lon', 'lat', 'ps']
     for s in ss:
         v = ds[s].values
         da = DataArray(name=s, data=float32(v))
         file_name = s + '_' + file_time + '.nc'
         da.to_netcdf(im_path+file_name)
-    ss = ['a_bnds', 'b_bnds']
-    for s in ss:
-        v0 = ds[s].values[:,0]
-        v1 = ds[s].values[:,1]
-        v = append(v1, v0[-1])
-        da = DataArray(name=s, data=float32(v))
-        file_name = s + '_' + file_time + '.nc'
-        da.to_netcdf(im_path+file_name)
+    # vertical coordinates
+    v = ds.a.values
+    da = DataArray(name='hyam', data=float32(v))
+    file_name = 'hyam' + '_' + file_time + '.nc'
+    da.to_netcdf(im_path+file_name)
+    v = ds.b.values
+    da = DataArray(name='hybm', data=float32(v))
+    file_name = 'hybm' + '_' + file_time + '.nc'
+    da.to_netcdf(im_path+file_name)
+    v0 = ds.a_bnds.values[:,0]
+    v1 = ds.a_bnds.values[:,1]
+    v = append(v1, v0[-1])
+    da = DataArray(name='hyai', data=float32(v))
+    file_name = 'hyai' + '_' + file_time + '.nc'
+    da.to_netcdf(im_path+file_name)
+    v0 = ds.b_bnds.values[:,0]
+    v1 = ds.b_bnds.values[:,1]
+    v = append(v1, v0[-1])
+    da = DataArray(name='hybi', data=float32(v))
+    file_name = 'hybi' + '_' + file_time + '.nc'
+    da.to_netcdf(im_path+file_name)
     # 3d temperature
     v = ds.ta.values
     da = DataArray(name='ta', data=float32(v))
@@ -116,7 +130,7 @@ for date in dates:
     file_name = 'tv_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # skin temperature
-    v = dss[6].ts.sel(time=tmon).values
+    v = dss[7].ts.sel(time=tmon).values
     da = DataArray(name='ts', data=float32(v))
     file_name = 'ts_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
@@ -137,14 +151,19 @@ for date in dates:
     file_name = 'sst_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # sea ice concentration
-    da = dss[5].siconc.sel(time=tday)
-    v = da.values.flatten()
+    ds = dss[5].siconc.sel(time=tday)
+    v = ds.values.flatten()
     vi = griddata(xy, v, (lon2d, lat2d), method='linear')
     da = DataArray(name='sic', data=float32(vi))
     file_name = 'sic_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
+    # surface snow amount
+    v = dss[6].snw.sel(time=tday).values
+    da = DataArray(name='snw', data=float32(v))
+    file_name = 'snw_' + file_time + '.nc'
+    da.to_netcdf(im_path+file_name)
     # soil moisture, temperature
-    ds = dss[7].sel(time=tera)
+    ds = dss[8].sel(time=tera)
     ss = ['swvl1', 'swvl2', 'swvl3', 'swvl4', 'stl1', 'stl2', 'stl3', 'stl4']
     for s in ss:
         v = ds[s].interp(longitude=lon1d, latitude=lat1d).values

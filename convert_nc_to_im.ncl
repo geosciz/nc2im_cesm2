@@ -5,15 +5,14 @@ begin
     data_path = "/home/zhangc/cesm2_cmip6/im_data/"
 
     time = addfile(data_path+"time_"+file_time+".nc","r")
-    lev = addfile(data_path+"lev_"+file_time+".nc","r")
     lon = addfile(data_path+"lon_"+file_time+".nc","r")
     lat = addfile(data_path+"lat_"+file_time+".nc","r")
 
     ps = addfile(data_path+"ps_"+file_time+".nc","r")
-    a = addfile(data_path+"a_"+file_time+".nc","r")
-    b = addfile(data_path+"b_"+file_time+".nc","r")
-    a_bnds = addfile(data_path+"a_bnds_"+file_time+".nc","r")
-    b_bnds = addfile(data_path+"b_bnds_"+file_time+".nc","r")
+    hyam = addfile(data_path+"hyam_"+file_time+".nc","r")
+    hybm = addfile(data_path+"hybm_"+file_time+".nc","r")
+    hyai = addfile(data_path+"hyai_"+file_time+".nc","r")
+    hybi = addfile(data_path+"hybi_"+file_time+".nc","r")
 
     ls = addfile(data_path+"ls_"+file_time+".nc","r")
     phis = addfile(data_path+"phis_"+file_time+".nc","r")
@@ -27,6 +26,7 @@ begin
     ts = addfile(data_path+"ts_"+file_time+".nc","r")
     sst = addfile(data_path+"sst_"+file_time+".nc","r")
     sic = addfile(data_path+"sic_"+file_time+".nc","r")
+    snw = addfile(data_path+"snw_"+file_time+".nc","r")
 
     sm1 = addfile(data_path+"swvl1_"+file_time+".nc","r")
     sm2 = addfile(data_path+"swvl2_"+file_time+".nc","r")
@@ -41,15 +41,14 @@ begin
     system(command)
 
     TIME = time->time
-    LEV = lev->lev
     LON = lon->lon
     LAT = lat->lat
 
     PS = ps->ps
-    AM = a->a
-    BM = b->b
-    AI = a_bnds->a_bnds
-    BI = b_bnds->b_bnds
+    AM = hyam->hyam
+    BM = hybm->hybm
+    AI = hyai->hyai
+    BI = hybi->hybi
 
     LS = ls->ls
     PHIS = phis->phis
@@ -63,6 +62,7 @@ begin
     TS = ts->ts
     SST = sst->sst
     SIC = sic->sic
+    SNW = snw->snw
 
     SM1 = sm1->swvl1
     SM2 = sm2->swvl2
@@ -99,7 +99,7 @@ begin
     PLEV = (/ 1000., 975., 950., 925., 900., 850., 800., 750., 700., \
                650., 600., 550., 500., 450., 400., 350., 300., 250., \
                200., 150., 100.,  70.,  50.,  30.,  20.,  10. /)
-    INTYP = 1
+    INTYP = 2
     P0MB = 1000.
     II = 1
     KXTRP = True
@@ -205,6 +205,14 @@ begin
     units_sic = "fraction"
     descr_sic = "sea ice concentration"
 
+    field_snw = "SNOW"
+    units_snw = "kg m-2"
+    descr_snw = "surface snow amount"
+
+    field_tav = "TAVGSFC"
+    units_tav = "K"
+    descr_tav = "daily mean of surface air temperature"
+
     opt = True
     opt@map_source = "CESM2"
     opt@projection = 0
@@ -231,8 +239,10 @@ begin
     wrf_wps_write_int(root_name,field_ls,units_ls,descr_ls,LS,opt)
     wrf_wps_write_int(root_name,field_sh,units_sh,descr_sh,SH,opt)
     wrf_wps_write_int(root_name,field_ts,units_ts,descr_ts,TS,opt)
+    wrf_wps_write_int(root_name,field_tav,units_tav,descr_tav,TS,opt)
     wrf_wps_write_int(root_name,field_sst,units_sst,descr_sst,SST,opt)
     wrf_wps_write_int(root_name,field_sic,units_sic,descr_sic,SIC,opt)
+    wrf_wps_write_int(root_name,field_snw,units_snw,descr_snw,SNW,opt)
     wrf_wps_write_int(root_name,field_st1,units_st1,descr_st1,ST1,opt)
     wrf_wps_write_int(root_name,field_st2,units_st2,descr_st2,ST2,opt)
     wrf_wps_write_int(root_name,field_st3,units_st3,descr_st3,ST3,opt)
