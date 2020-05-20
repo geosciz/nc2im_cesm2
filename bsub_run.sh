@@ -8,4 +8,7 @@
 #BSUB -e /home/zhangc/bsub_logs/err
 
 cd /home/zhangc/repositories/nc2im_cesm2/
+
+source activate python3
+
 python run.py
