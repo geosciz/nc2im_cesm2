@@ -172,7 +172,7 @@ for date in dates:
         da.to_netcdf(im_path+file_name)
     # run ncl
     chdir(os_path)
-    command = 'ncl convert_nc_to_im.ncl ' + "'file_time=" + '"' + file_time + '"' + "'"
+    command = 'ncl write_im.ncl ' + "'file_time=" + '"' + file_time + '"' + "'"
     system(command)
     # flag
     print('The '+str(date)+' IM File Has Been Processed!')
