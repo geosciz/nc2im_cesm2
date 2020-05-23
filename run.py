@@ -29,7 +29,7 @@ ncs = ['ta_6hrLev_CESM2_historical_r11i1p1f1_gn_200001010000-200912311800.nc',  
        'ts_Amon_CESM2_historical_r11i1p1f1_gn_200001-201412.nc',                #  7
        'soil_mon_ERA5_2015.nc',                                                 #  8
        'fracdata_0.9x1.25_gx1v6_c090317.nc',                                    #  9
-       'phis_CESM.nc']                                # 10
+       'phis_CESM2.nc']                                # 10
 
 chdir(nc_path)
 
