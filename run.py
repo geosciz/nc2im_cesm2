@@ -1,6 +1,6 @@
 from cftime import DatetimeNoLeap
 from datetime import timedelta
-from numpy import append, datetime64, empty, float32, full, repeat, stack
+from numpy import append, datetime64, empty, float32, float64, full, repeat, stack
 from os import chdir, system
 from scipy.interpolate import griddata
 from warnings import simplefilter
@@ -29,7 +29,7 @@ ncs = ['ta_6hrLev_CESM2_historical_r11i1p1f1_gn_200001010000-200912311800.nc',  
        'ts_Amon_CESM2_historical_r11i1p1f1_gn_200001-201412.nc',                #  7
        'soil_mon_ERA5_2015.nc',                                                 #  8
        'fracdata_0.9x1.25_gx1v6_c090317.nc',                                    #  9
-       'USGS-gtopo30_0.9x1.25_remap_c051027.nc']                                # 10
+       'phis_CESM.nc']                                # 10
 
 chdir(nc_path)
 
@@ -47,7 +47,7 @@ while date <= end_date:
     date += timedelta(hours=6)
 
 for date in dates:
-    # time
+    # datetime
     tnum = date.year, date.month, date.day, date.hour
     t6hr = DatetimeNoLeap(tnum[0], tnum[1], tnum[2], tnum[3])
     tday =  DatetimeNoLeap(tnum[0], tnum[1], tnum[2]) + timedelta(days=1)
@@ -77,15 +77,16 @@ for date in dates:
     da = DataArray(name='sh', data=float32(v))
     file_name = 'sh_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # basic info
+    # time
     ds = dss[0].sel(time=t6hr)
     da = ds.ta
     file_name = 'time_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    ss = ['lon', 'lat', 'ps']
+    # horizontal coordinates
+    ss = ['lon', 'lat']
     for s in ss:
         v = ds[s].values
-        da = DataArray(name=s, data=float32(v))
+        da = DataArray(name=s, data=float64(v))
         file_name = s + '_' + file_time + '.nc'
         da.to_netcdf(im_path+file_name)
     # vertical coordinates
@@ -109,22 +110,45 @@ for date in dates:
     da = DataArray(name='hybi', data=float32(v))
     file_name = 'hybi' + '_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
+    # surface pressure
+    v = ds.ps.values
+    da = DataArray(name='ps', data=float32(v))
+    file_name = 'ps_' + file_time + '.nc'
+    da.to_netcdf(im_path+file_name)
+    # 3d pressure
+    a = ds.a.values
+    b = ds.b.values
+    ps = ds.ps.values
+    p0 = full(ps.shape, ds.p0.values)
+    shape = ds.ta.shape
+    v = empty(shape)
+    for i in range(shape[0]):
+        v[i] = a[i]*p0 + b[i]*ps
+    da = DataArray(name='p', data=float32(v))
+    file_name = 'p_' + file_time + '.nc'
+    da.to_netcdf(im_path+file_name)
     # 3d temperature
     v = ds.ta.values
     da = DataArray(name='ta', data=float32(v))
     file_name = 'ta_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
-    # 3d humidity, winds
-    for i in range(1,4):
-        ds = dss[i].sel(time=t6hr)
-        vi = ds.variable_id
-        v = ds[vi].values
-        da = DataArray(name=vi, data=float32(v))
-        file_name = vi + '_' + file_time + '.nc'
-        da.to_netcdf(im_path+file_name)
+    # 3d humidity
+    v = dss[1].hus.sel(time=t6hr).sortby('lev').values
+    da = DataArray(name='hus', data=float32(v))
+    file_name = 'hus_' + file_time + '.nc'
+    da.to_netcdf(im_path+file_name)
+    # 3d winds
+    v = dss[2].ua.sel(time=t6hr).sortby('lev').values
+    da = DataArray(name='ua', data=float32(v))
+    file_name = 'ua_' + file_time + '.nc'
+    da.to_netcdf(im_path+file_name)
+    v = dss[3].va.sel(time=t6hr).sortby('lev').values
+    da = DataArray(name='va', data=float32(v))
+    file_name = 'va_' + file_time + '.nc'
+    da.to_netcdf(im_path+file_name)
     # 3d virtual temperature
     t = dss[0].ta.sel(time=t6hr).values
-    q = dss[1].hus.sel(time=t6hr).values
+    q = dss[1].hus.sel(time=t6hr).sortby('lev').values
     tv = t*(1.+q*0.61)
     da = DataArray(name='tv', data=float32(tv))
     file_name = 'tv_' + file_time + '.nc'

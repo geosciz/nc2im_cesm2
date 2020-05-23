@@ -18,6 +18,7 @@ begin
     phis = addfile(data_path+"phis_"+file_time+".nc","r")
     sh = addfile(data_path+"sh_"+file_time+".nc","r")
 
+    p = addfile(data_path+"p_"+file_time+".nc","r")
     ta = addfile(data_path+"ta_"+file_time+".nc","r")
     hus = addfile(data_path+"hus_"+file_time+".nc","r")
     ua = addfile(data_path+"ua_"+file_time+".nc","r")
@@ -43,17 +44,17 @@ begin
     TIME = time->time
     LON = lon->lon
     LAT = lat->lat
-
-    PS = ps->ps
     AM = hyam->hyam
     BM = hybm->hybm
     AI = hyai->hyai
     BI = hybi->hybi
 
+    PS = ps->ps
     LS = ls->ls
     PHIS = phis->phis
     SH = sh->sh
 
+    P = p->p
     T = ta->ta
     Q = hus->hus
     U = ua->ua
@@ -73,11 +74,13 @@ begin
     ST3 = st3->stl3
     ST4 = st4->stl4
 
-    P0PA = 100000.
-    P = pres_hybrid_ccm(PS,P0PA,AM,BM)
     R = relhum(T,Q,P)
-    MX = 100.
-    R = where(R.gt.MX, MX, R)
+    RMN = 0.
+    RMX = 100.
+    R = where(R.lt.RMN,RMN,R)
+    R = where(R.gt.RMX,RMX,R)
+
+    P0PA = 100000.
     Z = cz2ccm(PS,PHIS,TV(::-1,:,:),P0PA,AM,BM,AI,BI)
     Z = Z(::-1,:,:)
 
@@ -108,6 +111,9 @@ begin
     UP = vinth2p_ecmwf(U(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,INTYP,P0MB,II,KXTRP,0,TL0,PHIS)
     VP = vinth2p_ecmwf(V(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,INTYP,P0MB,II,KXTRP,0,TL0,PHIS)
     ZP = vinth2p_ecmwf(Z(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,INTYP,P0MB,II,KXTRP,-1,TL0,PHIS)
+
+    RP = where(RP.lt.RMN,RMN,RP)
+    RP = where(RP.gt.RMX,RMX,RP)
 
     field_t3 = "TT"
     units_t3 = "K"
@@ -165,35 +171,35 @@ begin
     units_ls = "fraction"
     descr_ls = "land-sea mask (0=water, 1=land)"
 
-    field_sm1 = "SM000007"
+    field_sm1 = "SM000010"
     units_sm1 = "m3 m-3"
     descr_sm1 = "soil moisture"
 
-    field_sm2 = "SM007028"
+    field_sm2 = "SM010040"
     units_sm2 = "m3 m-3"
     descr_sm2 = "soil moisture"
 
-    field_sm3 = "SM028100"
+    field_sm3 = "SM040100"
     units_sm3 = "m3 m-3"
     descr_sm3 = "soil moisture"
 
-    field_sm4 = "SM100289"
+    field_sm4 = "SM100200"
     units_sm4 = "m3 m-3"
     descr_sm4 = "soil moisture"
 
-    field_st1 = "ST000007"
+    field_st1 = "ST000010"
     units_st1 = "K"
     descr_st1 = "soil temperature"
 
-    field_st2 = "ST007028"
+    field_st2 = "ST010040"
     units_st2 = "K"
     descr_st2 = "soil temperature"
 
-    field_st3 = "ST028100"
+    field_st3 = "ST040100"
     units_st3 = "K"
     descr_st3 = "soil temperature"
 
-    field_st4 = "ST100289"
+    field_st4 = "ST100200"
     units_st4 = "K"
     descr_st4 = "soil temperature"
 
@@ -217,17 +223,17 @@ begin
     opt@map_source = "CESM2"
     opt@projection = 0
     opt@startloc = "SWCORNER"
-    opt@startlon = LON(0)
-    opt@startlat = LAT(0)
-    opt@deltalon = LON(1)-LON(0)
-    opt@deltalat = LAT(1)-LAT(0)
+    opt@startlon = doubletofloat(LON(0))
+    opt@startlat = doubletofloat(LAT(0))
+    opt@deltalon = doubletofloat(LON(1)-LON(0))
+    opt@deltalat = doubletofloat(LAT(1)-LAT(0))
     opt@is_wind_earth_relative = False
 
     time_long = "%Y-%N-%D_%H:00:0000000"
     time_short = "%Y-%N-%D_%H"
-    HDATE = cd_string(TIME, time_long)
+    HDATE = cd_string(TIME,time_long)
     file_pref = "CESM2_CMIP6_HISTORICAL"
-    OFILE = file_pref + ":" + cd_string(TIME, time_short)
+    OFILE = file_pref + ":" + cd_string(TIME,time_short)
     root_name = data_path + file_pref
 
     command = "rm " + data_path + OFILE
@@ -264,10 +270,10 @@ begin
 
     do i=0,dimsizes(PLEV)-1
         opt@level = PLEV(i)*100.
-        wrf_wps_write_int(root_name,field_t3,units_t3,descr_t3,TP(i,:,:),opt)
-        wrf_wps_write_int(root_name,field_r3,units_r3,descr_r3,RP(i,:,:),opt)
         wrf_wps_write_int(root_name,field_u3,units_u3,descr_u3,UP(i,:,:),opt)
         wrf_wps_write_int(root_name,field_v3,units_v3,descr_v3,VP(i,:,:),opt)
+        wrf_wps_write_int(root_name,field_t3,units_t3,descr_t3,TP(i,:,:),opt)
+        wrf_wps_write_int(root_name,field_r3,units_r3,descr_r3,RP(i,:,:),opt)
         wrf_wps_write_int(root_name,field_z3,units_z3,descr_z3,ZP(i,:,:),opt)
     end do
 
