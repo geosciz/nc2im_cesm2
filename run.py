@@ -27,9 +27,10 @@ ncs = ['ta_6hrLev_CESM2_historical_r11i1p1f1_gn_200001010000-200912311800.nc',  
        'siconc_SIday_CESM2_historical_r11i1p1f1_gn_20000102-20150101.nc',       #  5
        'snw_day_CESM2_historical_r11i1p1f1_gn_20000101-20150101.nc',            #  6
        'ts_Amon_CESM2_historical_r11i1p1f1_gn_200001-201412.nc',                #  7
-       'soil_mon_ERA5_2015.nc',                                                 #  8
-       'fracdata_0.9x1.25_gx1v6_c090317.nc',                                    #  9
-       'phis_CESM2.nc']                                # 10
+       'tsl_Lmon_CESM2_historical_r11i1p1f1_gn_200001-201412.nc',               #  8
+       'soil_mon_ERA5_2015.nc',                                                 #  9
+       'landmask_CESM2.nc',                                                     # 10
+       'phis_CESM2.nc']                                                         # 11
 
 chdir(nc_path)
 
@@ -63,17 +64,17 @@ for date in dates:
     tera = datetime64('2015-'+str(tnum[1]).zfill(2)+'-01')
     file_time = str(t6hr).replace(' ', '_')
     # land-sea mask
-    v = dss[9].LANDMASK.values
+    v = dss[10].landmask.values
     da = DataArray(name='ls', data=float32(v))
     file_name = 'ls_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # surface geopotential
-    v = dss[10].PHIS.values
+    v = dss[11].phis.values
     da = DataArray(name='phis', data=float32(v))
     file_name = 'phis_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # soil height
-    v = dss[10].PHIS.values/9.80655
+    v = dss[11].phis.values/9.80655
     da = DataArray(name='sh', data=float32(v))
     file_name = 'sh_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
@@ -170,30 +171,45 @@ for date in dates:
     ny = len(lat1d)
     lon2d = repeat(lon1d, ny).reshape(nx, ny).transpose()
     lat2d = repeat(lat1d, nx).reshape(ny, nx)
-    vi = griddata(xy, v, (lon2d, lat2d), method='linear')
-    da = DataArray(name='sst', data=float32(vi))
+    vc = griddata(xy, v, (lon2d, lat2d), method='linear')
+    vk = vc + 273.15
+    da = DataArray(name='sst', data=float32(vk))
+    daf = da.fillna(0.)
     file_name = 'sst_' + file_time + '.nc'
-    da.to_netcdf(im_path+file_name)
+    daf.to_netcdf(im_path+file_name)
     # sea ice concentration
-    ds = dss[5].siconc.sel(time=tday)
-    v = ds.values.flatten()
-    vi = griddata(xy, v, (lon2d, lat2d), method='linear')
-    da = DataArray(name='sic', data=float32(vi))
+    da = dss[5].siconc.sel(time=tday)
+    v = da.values.flatten()
+    vp = griddata(xy, v, (lon2d, lat2d), method='linear')
+    v = vp/100.
+    da = DataArray(name='sic', data=float32(v))
+    daf = da.fillna(0.)
     file_name = 'sic_' + file_time + '.nc'
-    da.to_netcdf(im_path+file_name)
+    daf.to_netcdf(im_path+file_name)
     # surface snow amount
     v = dss[6].snw.sel(time=tday).values
     da = DataArray(name='snw', data=float32(v))
+    daf = da.fillna(0.)
     file_name = 'snw_' + file_time + '.nc'
-    da.to_netcdf(im_path+file_name)
-    # soil moisture, temperature
-    ds = dss[8].sel(time=tera)
-    ss = ['swvl1', 'swvl2', 'swvl3', 'swvl4', 'stl1', 'stl2', 'stl3', 'stl4']
+    daf.to_netcdf(im_path+file_name)
+    # soil moisture
+    ds = dss[9].sel(time=tera)
+    ss = ['swvl1', 'swvl2', 'swvl3', 'swvl4']
     for s in ss:
         v = ds[s].interp(longitude=lon1d, latitude=lat1d).values
         da = DataArray(name=s, data=float32(v))
+        daf = da.fillna(0.)
         file_name = s + '_' + file_time + '.nc'
-        da.to_netcdf(im_path+file_name)
+        daf.to_netcdf(im_path+file_name)
+    # soil temperature
+    ds = dss[8].tsl.sel(time=tmon)
+    ss = ['tsl0', 'tsl1', 'tsl2', 'tsl3']
+    for i in range(4):
+        v = ds.isel(depth=i).values
+        da = DataArray(name=ss[i], data=float32(v))
+        daf = da.fillna(0.)
+        file_name = ss[i] + '_' + file_time + '.nc'
+        daf.to_netcdf(im_path+file_name)
     # run ncl
     chdir(os_path)
     command = 'ncl write_im.ncl ' + "'file_time=" + '"' + file_time + '"' + "'"
