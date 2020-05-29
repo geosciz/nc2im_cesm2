@@ -1,4 +1,5 @@
 load "$NCARG_ROOT/lib/ncarg/nclscripts/contrib/cd_string.ncl"
+load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/popRemap.ncl"
 
 begin
 
@@ -61,8 +62,8 @@ begin
     V = va->va
     TV = tv->tv
     TS = ts->ts
-    SST = sst->sst
-    SIC = sic->sic
+    SSTO = sst->sst
+    SICO = sic->sic
     SNW = snw->snw
 
     SM1 = sm1->swvl1
@@ -73,6 +74,9 @@ begin
     ST2 = st2->tsl1
     ST3 = st3->tsl2
     ST4 = st4->tsl3
+
+    SST = PopLatLon(SSTO,"gx1v7","fv0.9x1.25","aave","da","151008")
+    SIC = PopLatLon(SICO,"gx1v7","fv0.9x1.25","aave","da","151008")
 
     R = relhum(T,Q,P)
     RMN = 0.

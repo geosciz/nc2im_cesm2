@@ -161,31 +161,35 @@ for date in dates:
     da.to_netcdf(im_path+file_name)
     # sea surface temperature
     ds = dss[4].tos.sel(time=tday)
-    x = ds.lon.values.flatten()
-    y = ds.lat.values.flatten()
-    xy = stack((x, y), axis=-1)
-    v = ds.values.flatten()
+    #x = ds.lon.values.flatten()
+    #y = ds.lat.values.flatten()
+    #xy = stack((x, y), axis=-1)
+    #v = ds.values.flatten() + 273.15
+    v = ds.values + 273.15
     lon1d = dss[0].lon.values
     lat1d = dss[0].lat.values
-    nx = len(lon1d)
-    ny = len(lat1d)
-    lon2d = repeat(lon1d, ny).reshape(nx, ny).transpose()
-    lat2d = repeat(lat1d, nx).reshape(ny, nx)
-    vc = griddata(xy, v, (lon2d, lat2d), method='linear')
-    vk = vc + 273.15
-    da = DataArray(name='sst', data=float32(vk))
-    daf = da.fillna(0.)
+    #nx = len(lon1d)
+    #ny = len(lat1d)
+    #lon2d = repeat(lon1d, ny).reshape(nx, ny).transpose()
+    #lat2d = repeat(lat1d, nx).reshape(ny, nx)
+    #vi = griddata(xy, v, (lon2d, lat2d), method='linear')
+    #da = DataArray(name='sst', data=float32(vi))
+    da = DataArray(name='sst', data=float32(v))
+    #daf = da.fillna(0.)
     file_name = 'sst_' + file_time + '.nc'
-    daf.to_netcdf(im_path+file_name)
+    #daf.to_netcdf(im_path+file_name)
+    da.to_netcdf(im_path+file_name)
     # sea ice concentration
-    da = dss[5].siconc.sel(time=tday)
-    v = da.values.flatten()
-    vp = griddata(xy, v, (lon2d, lat2d), method='linear')
-    v = vp/100.
+    ds = dss[5].siconc.sel(time=tday)
+    #v = ds.values.flatten()*0.01
+    v = ds.values*0.01
+    #vi = griddata(xy, v, (lon2d, lat2d), method='linear')
+    #da = DataArray(name='sic', data=float32(vi))
     da = DataArray(name='sic', data=float32(v))
-    daf = da.fillna(0.)
+    #daf = da.fillna(0.)
     file_name = 'sic_' + file_time + '.nc'
-    daf.to_netcdf(im_path+file_name)
+    #daf.to_netcdf(im_path+file_name)
+    da.to_netcdf(im_path+file_name)
     # surface snow amount
     v = dss[6].snw.sel(time=tday).values
     da = DataArray(name='snw', data=float32(v))
