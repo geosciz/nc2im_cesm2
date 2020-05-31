@@ -1,5 +1,4 @@
 load "$NCARG_ROOT/lib/ncarg/nclscripts/contrib/cd_string.ncl"
-load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/popRemap.ncl"
 
 begin
 
@@ -75,14 +74,10 @@ begin
     ST3 = st3->tsl2
     ST4 = st4->tsl3
 
-    SST = PopLatLon(SSTO,"gx1v7","fv0.9x1.25","aave","da","151008")
-    SIC = PopLatLon(SICO,"gx1v7","fv0.9x1.25","aave","da","151008")
+    SST = ESMF_regrid_with_weights(SSTO,"map_gx1v6_to_fv0.9x1.25_bilin_da_090309.nc",False)
+    SIC = ESMF_regrid_with_weights(SICO,"map_gx1v6_to_fv0.9x1.25_bilin_da_090309.nc",False)
 
     R = relhum(T,Q,P)
-    RMN = 0.
-    RMX = 100.
-    R = where(R.lt.RMN,RMN,R)
-    R = where(R.gt.RMX,RMX,R)
 
     P0PA = 100000.
     Z = cz2ccm(PS,PHIS,TV(::-1,:,:),P0PA,AM,BM,AI,BI)
@@ -115,9 +110,6 @@ begin
     UP = vinth2p_ecmwf(U(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,INTYP,P0MB,II,KXTRP,0,TL0,PHIS)
     VP = vinth2p_ecmwf(V(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,INTYP,P0MB,II,KXTRP,0,TL0,PHIS)
     ZP = vinth2p_ecmwf(Z(::-1,:,:),AM(::-1),BM(::-1),PLEV,PS,INTYP,P0MB,II,KXTRP,-1,TL0,PHIS)
-
-    RP = where(RP.lt.RMN,RMN,RP)
-    RP = where(RP.gt.RMX,RMX,RP)
 
     field_t3 = "TT"
     units_t3 = "K"

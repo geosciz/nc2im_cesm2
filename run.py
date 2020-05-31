@@ -160,42 +160,36 @@ for date in dates:
     file_name = 'ts_' + file_time + '.nc'
     da.to_netcdf(im_path+file_name)
     # sea surface temperature
-    ds = dss[4].tos.sel(time=tday)
+    #ds = dss[4].tos.sel(time=tday)
     #x = ds.lon.values.flatten()
     #y = ds.lat.values.flatten()
     #xy = stack((x, y), axis=-1)
     #v = ds.values.flatten() + 273.15
-    v = ds.values + 273.15
-    lon1d = dss[0].lon.values
-    lat1d = dss[0].lat.values
+    #lon1d = dss[0].lon.values
+    #lat1d = dss[0].lat.values
     #nx = len(lon1d)
     #ny = len(lat1d)
     #lon2d = repeat(lon1d, ny).reshape(nx, ny).transpose()
     #lat2d = repeat(lat1d, nx).reshape(ny, nx)
     #vi = griddata(xy, v, (lon2d, lat2d), method='linear')
     #da = DataArray(name='sst', data=float32(vi))
-    da = DataArray(name='sst', data=float32(v))
     #daf = da.fillna(0.)
-    file_name = 'sst_' + file_time + '.nc'
+    #file_name = 'sst_' + file_time + '.nc'
     #daf.to_netcdf(im_path+file_name)
-    da.to_netcdf(im_path+file_name)
     # sea ice concentration
-    ds = dss[5].siconc.sel(time=tday)
+    #ds = dss[5].siconc.sel(time=tday)
     #v = ds.values.flatten()*0.01
-    v = ds.values*0.01
     #vi = griddata(xy, v, (lon2d, lat2d), method='linear')
     #da = DataArray(name='sic', data=float32(vi))
-    da = DataArray(name='sic', data=float32(v))
     #daf = da.fillna(0.)
-    file_name = 'sic_' + file_time + '.nc'
+    #file_name = 'sic_' + file_time + '.nc'
     #daf.to_netcdf(im_path+file_name)
-    da.to_netcdf(im_path+file_name)
     # surface snow amount
-    v = dss[6].snw.sel(time=tday).values
-    da = DataArray(name='snw', data=float32(v))
-    daf = da.fillna(0.)
-    file_name = 'snw_' + file_time + '.nc'
-    daf.to_netcdf(im_path+file_name)
+    #v = dss[6].snw.sel(time=tday).values
+    #da = DataArray(name='snw', data=float32(v))
+    #daf = da.fillna(0.)
+    #file_name = 'snw_' + file_time + '.nc'
+    #daf.to_netcdf(im_path+file_name)
     # soil moisture
     ds = dss[9].sel(time=tera)
     ss = ['swvl1', 'swvl2', 'swvl3', 'swvl4']
