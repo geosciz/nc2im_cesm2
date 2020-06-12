@@ -11,9 +11,9 @@ start_year = 2001
 start_month = 1
 start_day = 1
 
-end_year = 2001
+end_year = 2004
 end_month = 1
-end_day = 2
+end_day = 1
 
 nc_path = '/home/zhangc/cesm2_cmip6/nc_data/'
 im_path = '/home/zhangc/cesm2_cmip6/im_data/'
@@ -165,8 +165,8 @@ for date in dates:
     #y = ds.lat.values.flatten()
     #xy = stack((x, y), axis=-1)
     #v = ds.values.flatten() + 273.15
-    #lon1d = dss[0].lon.values
-    #lat1d = dss[0].lat.values
+    lon1d = dss[0].lon.values
+    lat1d = dss[0].lat.values
     #nx = len(lon1d)
     #ny = len(lat1d)
     #lon2d = repeat(lon1d, ny).reshape(nx, ny).transpose()

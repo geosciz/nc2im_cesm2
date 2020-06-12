@@ -25,9 +25,9 @@ begin
     va = addfile(data_path+"va_"+file_time+".nc","r")
     tv = addfile(data_path+"tv_"+file_time+".nc","r")
     ts = addfile(data_path+"ts_"+file_time+".nc","r")
-    sst = addfile(data_path+"sst_"+file_time+".nc","r")
-    sic = addfile(data_path+"sic_"+file_time+".nc","r")
-    snw = addfile(data_path+"snw_"+file_time+".nc","r")
+    ;sst = addfile(data_path+"sst_"+file_time+".nc","r")
+    ;sic = addfile(data_path+"sic_"+file_time+".nc","r")
+    ;snw = addfile(data_path+"snw_"+file_time+".nc","r")
 
     sm1 = addfile(data_path+"swvl1_"+file_time+".nc","r")
     sm2 = addfile(data_path+"swvl2_"+file_time+".nc","r")
@@ -61,9 +61,9 @@ begin
     V = va->va
     TV = tv->tv
     TS = ts->ts
-    SSTO = sst->sst
-    SICO = sic->sic
-    SNW = snw->snw
+    ;SST = sst->sst
+    ;SIC = sic->sic
+    ;SNW = snw->snw
 
     SM1 = sm1->swvl1
     SM2 = sm2->swvl2
@@ -73,9 +73,6 @@ begin
     ST2 = st2->tsl1
     ST3 = st3->tsl2
     ST4 = st4->tsl3
-
-    SST = ESMF_regrid_with_weights(SSTO,"map_gx1v6_to_fv0.9x1.25_bilin_da_090309.nc",False)
-    SIC = ESMF_regrid_with_weights(SICO,"map_gx1v6_to_fv0.9x1.25_bilin_da_090309.nc",False)
 
     R = relhum(T,Q,P)
 
@@ -242,9 +239,9 @@ begin
     wrf_wps_write_int(root_name,field_sh,units_sh,descr_sh,SH,opt)
     wrf_wps_write_int(root_name,field_ts,units_ts,descr_ts,TS,opt)
     wrf_wps_write_int(root_name,field_tav,units_tav,descr_tav,TS,opt)
-    wrf_wps_write_int(root_name,field_sst,units_sst,descr_sst,SST,opt)
-    wrf_wps_write_int(root_name,field_sic,units_sic,descr_sic,SIC,opt)
-    wrf_wps_write_int(root_name,field_snw,units_snw,descr_snw,SNW,opt)
+    ;wrf_wps_write_int(root_name,field_sst,units_sst,descr_sst,SST,opt)
+    ;wrf_wps_write_int(root_name,field_sic,units_sic,descr_sic,SIC,opt)
+    ;wrf_wps_write_int(root_name,field_snw,units_snw,descr_snw,SNW,opt)
     wrf_wps_write_int(root_name,field_st1,units_st1,descr_st1,ST1,opt)
     wrf_wps_write_int(root_name,field_st2,units_st2,descr_st2,ST2,opt)
     wrf_wps_write_int(root_name,field_st3,units_st3,descr_st3,ST3,opt)
